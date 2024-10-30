@@ -9,6 +9,8 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
@@ -61,13 +63,22 @@ public class VentanaLogin {
 	public VentanaLogin() {
 		initialize();
 	}
+	
+	public void mostrarVentana() {
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+	}
+	public void mostrarVentana(JFrame f) {
+		frame.setLocationRelativeTo(f);
+		frame.setVisible(true);
+	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setIconImage(new ImageIcon(VentanaLogin.class.getResource("/vista/imagenes/icono-appchat.png")).getImage());
+		FuncionesVentanas.addIcon(frame);
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -79,7 +90,6 @@ public class VentanaLogin {
 		
 		frame.getContentPane().add(panelRegistro(), BorderLayout.SOUTH);
 		frame.getContentPane().add(panelLogin(), BorderLayout.CENTER);
-		
 	}
 	
 	private JPanel panelRegistro() {
@@ -92,6 +102,7 @@ public class VentanaLogin {
 		
 		// Campo botón registro
 		JButton botonRegistrar = new JButton("Registrar");
+		addManejadorIrAlRegistro(botonRegistrar);
 		botonRegistrar.setBackground(new Color(247, 210, 249));
 		botonRegistrar.setPreferredSize(new Dimension(90, 21));
 		panelRegistro.add(botonRegistrar);
@@ -119,7 +130,7 @@ public class VentanaLogin {
 		
 		// Campo teléfono: field
 		JTextField telfTxtField = new JTextField();
-		addManejadorLabelPassword(telfTxtField);
+		FuncionesVentanas.addManejadorLabelPassword(telfTxtField);
 		GridBagConstraints gbc_telfTxtField = new GridBagConstraints();
 		gbc_telfTxtField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_telfTxtField.insets = new Insets(0, 0, 5, 5);
@@ -148,7 +159,7 @@ public class VentanaLogin {
 		panelLogin.add(passwordField, gbc_passwordField);
 		
 		// Campo contraseña: Opción mostrar
-		JLabel mostrar = opcionMostrarPassword(passwordField);
+		JLabel mostrar = FuncionesVentanas.opcionMostrarPassword(passwordField);
 		GridBagConstraints gbc_Mostrar = new GridBagConstraints();
 		gbc_Mostrar.insets = new Insets(0, 0, 5, 5);
 		gbc_Mostrar.gridx = 3;
@@ -169,55 +180,18 @@ public class VentanaLogin {
 		
 		return panelLogin;
 	}
+
 	
-	private void addManejadorLabelPassword(JTextField passwordField) {
-		// El teléfono solo puede contener números
-		passwordField.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (c < '0' || c > '9') {
-					e.consume();
-				}
-			}
-		});
-	}
-	
-	private JLabel opcionMostrarPassword(final JPasswordField password) {
-		final JLabel mostrar = new JLabel("Mostrar");
-		mostrar.setForeground(Color.DARK_GRAY);
-		
-		// Se define el caracter de ocultación de la contraseña si esta está oculta
-		if (password.getEchoChar() != (char) 0) {
-			password.setEchoChar('•');
-		}
-		
-		// Manejador
-		mostrar.addMouseListener(new MouseAdapter() {
+	private void addManejadorIrAlRegistro(JButton button) {
+		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				boolean passwordMostrada = password.getEchoChar() == (char) 0;
-				if (!passwordMostrada) {
-					mostrar.setText("Ocultar");
-					password.setEchoChar((char)0);
-					passwordMostrada = true;
-				}
-				else {
-					mostrar.setText("Mostrar");
-					password.setEchoChar('•');
-					passwordMostrada = false;
-				}
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				mostrar.setForeground(Color.LIGHT_GRAY);
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				mostrar.setForeground(Color.DARK_GRAY);
+				JFrame ventanaRegistro = new VentanaRegistro();
+				ventanaRegistro.setVisible(true);
+				ventanaRegistro.setLocationRelativeTo(frame);
+				frame.dispose();
 			}
 		});
-		return mostrar;
 	}
 
 }
