@@ -1,18 +1,17 @@
 package vista;
 
-import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 public class FuncionesVentanas {
+	
+	private static final ImageIcon ICONO_PASSWORD_OCULTA = new ImageIcon(FuncionesVentanas.class.getResource("/vista/imagenes/ocultar.png"));
+	
+	private static final ImageIcon ICONO_PASSWORD_MOSTRADA = new ImageIcon(FuncionesVentanas.class.getResource("/vista/imagenes/mostrar.png"));
+	
+	private static final ImageIcon ICONO_APP = new ImageIcon(FuncionesVentanas.class.getResource("/vista/imagenes/icono-appchat.png"));
+	
 	public static void addManejadorLabelPassword(JTextField passwordField) {
 		// El teléfono solo puede contener números
 		passwordField.addKeyListener(new KeyAdapter() {
@@ -26,44 +25,45 @@ public class FuncionesVentanas {
 		});
 	}
 	
+	public static void addIcon(JFrame frame) {
+		frame.setIconImage(ICONO_APP.getImage());
+	}
+	
 	public static JLabel opcionMostrarPassword(final JPasswordField password) {
-		final JLabel mostrar = new JLabel("Mostrar");
-		mostrar.setForeground(Color.DARK_GRAY);
 		
 		// Se define el caracter de ocultación de la contraseña si esta está oculta
 		if (password.getEchoChar() != (char) 0) {
 			password.setEchoChar('•');
 		}
 		
-		// Manejador
+		final JLabel mostrar = new JLabel("");
+		mostrar.setIcon(ICONO_PASSWORD_OCULTA);
+		
 		mostrar.addMouseListener(new MouseAdapter() {
+			// Mostrar/ocultar la contraseña
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				boolean passwordMostrada = password.getEchoChar() == (char) 0;
 				if (!passwordMostrada) {
-					mostrar.setText("Ocultar");
+					mostrar.setIcon(ICONO_PASSWORD_MOSTRADA);
 					password.setEchoChar((char)0);
-					passwordMostrada = true;
 				}
 				else {
-					mostrar.setText("Mostrar");
+					mostrar.setIcon(ICONO_PASSWORD_OCULTA);
 					password.setEchoChar('•');
-					passwordMostrada = false;
 				}
 			}
+			// HAND_CURSOR si el ratón pasa por encima
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				mostrar.setForeground(Color.LIGHT_GRAY);
+				mostrar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				mostrar.setForeground(Color.DARK_GRAY);
+				mostrar.setCursor(Cursor.getDefaultCursor());
 			}
+			
 		});
 		return mostrar;
-	}
-	
-	public static void addIcon(JFrame frame) {
-		frame.setIconImage(new ImageIcon(VentanaLogin.class.getResource("/vista/imagenes/icono-appchat.png")).getImage());
 	}
 }
