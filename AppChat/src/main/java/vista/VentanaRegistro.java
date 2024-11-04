@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.AttributeSet.ColorAttribute;
+
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -21,9 +23,16 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Date;
+
 import com.toedter.calendar.JDateChooser;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.ScrollPaneConstants;
 
@@ -36,6 +45,15 @@ public class VentanaRegistro extends JFrame {
 	private JPasswordField passwordField1;
 	private JPasswordField passwordField2;
 	private JTextField imagenTxtField;
+	private JLabel txtNombre;
+	private JLabel txtApellidos;
+	private JLabel txtTelefono;
+	private JDateChooser FechaNacimientoDateChooser;
+	private JLabel txtFechaNacimiento;
+	private JLabel txtPass1;
+	private JLabel txtPass2;
+	private JLabel imagenPerfil;
+	private JLabel txtImagen;
 	
 	/**
 	 * Create the frame.
@@ -69,6 +87,7 @@ public class VentanaRegistro extends JFrame {
 		JButton aceptarButton = new JButton("Aceptar");
 		aceptarButton.setBackground(new Color(247, 210, 249));
 		panelAceptarCancelar.add(aceptarButton);
+		addManejadorProcesarRegistro(aceptarButton);
 		
 		// Botón volver al login
 		JButton cancelarButton = new JButton("Cancelar");
@@ -91,6 +110,17 @@ public class VentanaRegistro extends JFrame {
 		});
 	}
 	
+	private void addManejadorProcesarRegistro(JButton button) {
+		button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				limpiarDatos();
+				Boolean datosCorrectos = datosIntroducidosCorrectos();
+				
+			}
+		});
+	}
+	
 	private JPanel panelDatos() {
 		JPanel panelDatos = new JPanel();
 		contentPane.add(panelDatos, BorderLayout.CENTER);
@@ -102,7 +132,7 @@ public class VentanaRegistro extends JFrame {
 		panelDatos.setLayout(gbl_panelDatos);
 		
 		// Campo nombre: Texto
-		JLabel txtNombre = new JLabel("Nombre:");
+		txtNombre = new JLabel("Nombre:");
 		GridBagConstraints gbc_txtNombre = new GridBagConstraints();
 		gbc_txtNombre.anchor = GridBagConstraints.EAST;
 		gbc_txtNombre.insets = new Insets(0, 0, 5, 5);
@@ -122,7 +152,7 @@ public class VentanaRegistro extends JFrame {
 		nombreTxtField.setColumns(10);
 		
 		// Campo apellidos: Texto
-		JLabel txtApellidos = new JLabel("Apellidos:");
+		txtApellidos = new JLabel("Apellidos:");
 		GridBagConstraints gbc_txtApellidos = new GridBagConstraints();
 		gbc_txtApellidos.anchor = GridBagConstraints.EAST;
 		gbc_txtApellidos.insets = new Insets(0, 0, 5, 5);
@@ -142,7 +172,7 @@ public class VentanaRegistro extends JFrame {
 		apellidosTxtField.setColumns(10);
 		
 		// Campo teléfono: Texto
-		JLabel txtTelefono = new JLabel("Teléfono:");
+		txtTelefono = new JLabel("Teléfono:");
 		GridBagConstraints gbc_txtTelefono = new GridBagConstraints();
 		gbc_txtTelefono.anchor = GridBagConstraints.EAST;
 		gbc_txtTelefono.insets = new Insets(0, 0, 5, 5);
@@ -162,7 +192,7 @@ public class VentanaRegistro extends JFrame {
 		TelefonoTxtField.setColumns(10);
 		
 		// Campo fecha de nacimiento: Texto
-		JLabel txtFechaNacimiento = new JLabel("Fecha de nacimiento:");
+		txtFechaNacimiento = new JLabel("Fecha de nacimiento:");
 		GridBagConstraints gbc_txtFechaNacimiento = new GridBagConstraints();
 		gbc_txtFechaNacimiento.anchor = GridBagConstraints.EAST;
 		gbc_txtFechaNacimiento.insets = new Insets(0, 0, 5, 5);
@@ -171,7 +201,7 @@ public class VentanaRegistro extends JFrame {
 		panelDatos.add(txtFechaNacimiento, gbc_txtFechaNacimiento);
 		
 		// Campo fecha de nacimiento: date chooser
-		JDateChooser FechaNacimientoDateChooser = new JDateChooser();
+		FechaNacimientoDateChooser = new JDateChooser();
 		GridBagConstraints gbc_FechaNacimientoDateChooser = new GridBagConstraints();
 		gbc_FechaNacimientoDateChooser.insets = new Insets(0, 0, 5, 5);
 		gbc_FechaNacimientoDateChooser.fill = GridBagConstraints.BOTH;
@@ -180,7 +210,7 @@ public class VentanaRegistro extends JFrame {
 		panelDatos.add(FechaNacimientoDateChooser, gbc_FechaNacimientoDateChooser);
 		
 		// Campo contraseña (1º): Texto
-		JLabel txtPass1 = new JLabel("Contraseña:");
+		txtPass1 = new JLabel("Contraseña:");
 		GridBagConstraints gbc_txtPass1 = new GridBagConstraints();
 		gbc_txtPass1.anchor = GridBagConstraints.EAST;
 		gbc_txtPass1.insets = new Insets(0, 0, 5, 5);
@@ -206,7 +236,7 @@ public class VentanaRegistro extends JFrame {
 		panelDatos.add(mostrarPassJLabel1, gbc_lblNewLabel_3);
 		
 		// Campo contraseña (2º): Texto
-		JLabel txtPass2 = new JLabel("Repite la contraseña:");
+		txtPass2 = new JLabel("Repite la contraseña:");
 		GridBagConstraints gbc_txtPass2 = new GridBagConstraints();
 		gbc_txtPass2.anchor = GridBagConstraints.EAST;
 		gbc_txtPass2.insets = new Insets(0, 0, 5, 5);
@@ -250,7 +280,7 @@ public class VentanaRegistro extends JFrame {
 		panelDatos.add(textAreaConScroll(), gbc_scrollPaneSaludo);
 		
 		// Campo imagen: Texto
-		JLabel txtImagen = new JLabel("Imagen:");
+		txtImagen = new JLabel("Imagen:");
 		GridBagConstraints gbc_txtImagen = new GridBagConstraints();
 		gbc_txtImagen.anchor = GridBagConstraints.NORTHEAST;
 		gbc_txtImagen.insets = new Insets(0, 0, 5, 5);
@@ -270,7 +300,7 @@ public class VentanaRegistro extends JFrame {
 		imagenTxtField.setColumns(10);
 		
 		// Campo imagen: Imagen mostrada de la url del field
-		JLabel imagenPerfil = new JLabel("");
+		imagenPerfil = new JLabel("");
 		imagenPerfil.setIcon(new ImageIcon(VentanaRegistro.class.getResource("/vista/imagenes/usuario.png")));
 		GridBagConstraints gbc_imagenPerfil = new GridBagConstraints();
 		gbc_imagenPerfil.fill = GridBagConstraints.HORIZONTAL;
@@ -294,5 +324,69 @@ public class VentanaRegistro extends JFrame {
 		
 		return scrollPane;
 	}
-
+	
+	private boolean datosIntroducidosCorrectos() {
+		boolean datosCorrectos = true;
+		// nombre no vacío
+		if (nombreTxtField.getText().trim().isEmpty()) {
+			txtNombre.setForeground(Color.RED);
+			datosCorrectos = false;
+		}
+		// apellidos no vacíos
+		if (apellidosTxtField.getText().trim().isEmpty()) {
+			txtApellidos.setForeground(Color.RED);
+			datosCorrectos = false;
+		}
+		// teléfono no vacío y sólo tiene números
+		if (TelefonoTxtField.getText().isEmpty() || TelefonoTxtField.getText().chars()
+																				.mapToObj(c -> (char) c)
+																				.anyMatch(c -> !Character.isDigit(c))) {
+			txtTelefono.setForeground(Color.RED);
+			datosCorrectos = false;
+		}
+		// Fecha de nacimiento anterior a hoy
+		Date hoy = new Date();
+		if(FechaNacimientoDateChooser.getDate() == null || FechaNacimientoDateChooser.getDate().after(hoy)) {
+			txtFechaNacimiento.setForeground(Color.RED);
+			datosCorrectos = false;
+		}
+		// contraseña no vacía
+		if(passwordField1.getPassword().length == 0) {
+			txtPass1.setForeground(Color.RED);
+			datosCorrectos = false;
+		}
+		if(passwordField2.getPassword().length == 0) {
+			txtPass2.setForeground(Color.RED);
+			datosCorrectos = false;
+		}
+		// contraseñas iguales
+		if(!Arrays.equals(passwordField1.getPassword(), passwordField2.getPassword())) {
+			txtPass1.setForeground(Color.RED);
+			txtPass2.setForeground(Color.RED);
+			datosCorrectos = false;
+		}
+		// url de la imagen hace referencia a una imagen existente
+		URL url = null;
+		try {
+			url = new URL(imagenTxtField.getText());
+			BufferedImage image = ImageIO.read(url);
+			ImageIcon imageIcon = new ImageIcon(image);
+			
+		} catch (Exception e) {
+			txtImagen.setForeground(Color.RED);
+			datosCorrectos = false;
+		}
+		return datosCorrectos;
+	}
+	
+	private void limpiarDatos() {
+		Color color = new JLabel().getForeground();
+		txtNombre.setForeground(color);
+		txtApellidos.setForeground(color);
+		txtTelefono.setForeground(color);
+		txtFechaNacimiento.setForeground(color);
+		txtPass2.setForeground(color);
+		txtPass1.setForeground(color);
+		txtImagen.setForeground(color);
+	}
 }
