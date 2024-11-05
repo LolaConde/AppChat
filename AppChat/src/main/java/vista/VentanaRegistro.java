@@ -99,25 +99,17 @@ public class VentanaRegistro extends JFrame {
 	}
 	
 	private void addManejadorIrAlLogin(JButton button) {
-		button.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				VentanaLogin ventanaLogin = new VentanaLogin();
-				ventanaLogin.mostrarVentana(VentanaRegistro.this);
-				VentanaRegistro.this.dispose();
-				
-			}
+		button.addActionListener(ev -> {
+			VentanaLogin ventanaLogin = new VentanaLogin();
+			ventanaLogin.mostrarVentana(VentanaRegistro.this);
+			VentanaRegistro.this.dispose();
 		});
 	}
 	
 	private void addManejadorProcesarRegistro(JButton button) {
-		button.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				limpiarDatos();
-				Boolean datosCorrectos = datosIntroducidosCorrectos();
-				
-			}
+		button.addActionListener(ev -> {
+			limpiarDatos();
+			Boolean datosCorrectos = datosIntroducidosCorrectos();
 		});
 	}
 	

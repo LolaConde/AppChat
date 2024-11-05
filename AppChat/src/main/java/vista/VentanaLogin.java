@@ -183,14 +183,11 @@ public class VentanaLogin {
 
 	
 	private void addManejadorIrAlRegistro(JButton button) {
-		button.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JFrame ventanaRegistro = new VentanaRegistro();
-				ventanaRegistro.setVisible(true);
-				ventanaRegistro.setLocationRelativeTo(frame);
-				frame.dispose();
-			}
+		button.addActionListener(ev -> {
+			JFrame ventanaRegistro = new VentanaRegistro();
+			ventanaRegistro.setVisible(true);
+			ventanaRegistro.setLocationRelativeTo(frame);
+			frame.dispose();
 		});
 	}
 
