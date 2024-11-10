@@ -56,6 +56,10 @@ public class Controlador {
 		return usuarioActual.getUltimosMensajes();
 	}
 	
+	public static String getImagenDePerfil() {
+		return usuarioActual.getImagenPerfil();
+	}
+	
 	public static String getNombreDeContacto(Usuario usuario) {
 		String nombreDeContacto = usuarioActual.getNombreContacto(usuario);
 		return nombreDeContacto == null ? Integer.toString(usuario.getNumeroTelefono()) : nombreDeContacto;

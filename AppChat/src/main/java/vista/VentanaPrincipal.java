@@ -1,6 +1,9 @@
 package vista;
 
 import java.awt.EventQueue;
+import java.awt.Image;
+import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,6 +23,7 @@ import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.imageio.ImageIO;
 import javax.swing.AbstractListModel;
 import java.awt.Dimension;
 import java.awt.Color;
@@ -129,14 +133,17 @@ public class VentanaPrincipal extends JFrame {
 		Component horizontalStrut_3 = Box.createHorizontalStrut(20);
 		botonera.add(horizontalStrut_3);
 		
-		JLabel lblNombreUsuario = new JLabel("Nombre usuario");
-		botonera.add(lblNombreUsuario);
-		
-		Component horizontalStrut_4 = Box.createHorizontalStrut(20);
-		horizontalStrut_4.setPreferredSize(new Dimension(10, 0));
-		botonera.add(horizontalStrut_4);
-		
-		JLabel lblImagen = new JLabel("imagen");
+		JLabel lblImagen = new JLabel("Imagen");
+		try {
+			URL imageUrl = new URL(Controlador.getImagenDePerfil());
+			Image image = ImageIO.read(imageUrl);
+			ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(25, 25, Image.SCALE_SMOOTH));
+			lblImagen.setIcon(imageIcon);
+			lblImagen.setText("");
+		} catch (IOException e) {
+			e.printStackTrace();
+			lblImagen.setIcon(null); // Default to no image if there was an issue
+		}
 		botonera.add(lblImagen);
 	}
 
