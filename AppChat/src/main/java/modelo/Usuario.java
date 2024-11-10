@@ -3,6 +3,10 @@ package modelo;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Usuario {
 	// Datos
@@ -53,9 +57,53 @@ public class Usuario {
     	this(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, SALUDO_POR_DEFECTO);
     }
     
+    public int getNumeroTelefono() {
+    	return numeroTelefono;
+    }
+    
     public void setImagenPerfil(String imagen) {
     	this.imagenPerfil = imagen;
     }
+    
+    public String getImagenPerfil() {
+    	return this.imagenPerfil;
+    }
+    public String getNombreContacto(Usuario usuario) {
+    	for (Contacto c : contactos) {
+    		if (c instanceof ContactoIndividual && ((ContactoIndividual) c).isUsuario(usuario)) {
+    			return c.getNombre();
+    		}
+    	}
+    	return null;
+    }
+    
+    public void addContactoIndividual(Usuario usuario, String nombre) {
+    	contactos.add(new ContactoIndividual(usuario, nombre));
+    }
+    
+    public void enviarMensaje(Usuario usuario, String texto) {
+    	Mensaje mensaje = new Mensaje(this, usuario, texto);
+    	this.mensajesEnviados.add(mensaje);
+    	usuario.recibirMensaje(mensaje);
+    }
+    
+    public void recibirMensaje(Mensaje mensaje) {
+    	if (mensaje.isReceptor(this)) {
+    		this.mensajesRecibidos.add(mensaje);
+    	}
+    }
+    
+    public List<Mensaje> getUltimosMensajes() {
+    	Map<Usuario, List<Mensaje>> mensajesPorUsuario = Stream.of(mensajesEnviados, mensajesRecibidos)
+    			.flatMap(listaMensajes -> listaMensajes.stream())
+    			.sorted((m1, m2) -> - m1.getFechaYHora().compareTo(m2.getFechaYHora()))
+    			.collect(Collectors.groupingBy(m -> m.getOtro(this)));
+
+    	return mensajesPorUsuario.values().stream()
+    		.map(lista -> lista.get(0))
+    		.collect(Collectors.toList());
+    }
+    
     
     @Override
     public boolean equals(Object obj) {

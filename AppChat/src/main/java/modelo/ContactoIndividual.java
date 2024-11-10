@@ -8,4 +8,8 @@ public class ContactoIndividual extends Contacto{
     	super(nombre);
     	this.usuario = usuario;
     }
+    
+    public boolean isUsuario(Usuario usuario) {
+    	return this.usuario.equals(usuario);
+    }
 }

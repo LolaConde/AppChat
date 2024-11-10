@@ -7,4 +7,8 @@ public abstract class Contacto {
     public Contacto(String nombre) {
     	this.nombre = nombre;
     }
+    
+    public String getNombre() {
+    	return nombre;
+    }
 }

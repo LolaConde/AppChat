@@ -170,6 +170,7 @@ public class VentanaLogin {
 		JButton botonLogin = new JButton("Login");
 		botonLogin.setForeground(new Color(0, 0, 0));
 		botonLogin.setBackground(new Color(247, 210, 249));
+		addManejadorHacerLogin(botonLogin);
 		GridBagConstraints gbc_botonLogin = new GridBagConstraints();
 		gbc_botonLogin.gridwidth = 3;
 		gbc_botonLogin.insets = new Insets(0, 0, 5, 5);
@@ -187,6 +188,24 @@ public class VentanaLogin {
 			JFrame ventanaRegistro = new VentanaRegistro();
 			ventanaRegistro.setVisible(true);
 			ventanaRegistro.setLocationRelativeTo(frame);
+			frame.dispose();
+		});
+	}
+	
+	private void addManejadorHacerLogin(JButton button) {
+		button.addActionListener(ev -> {
+			// TODO Obtener el teléfono y contraseña de la pantalla
+			/* TODO boolean estaLogueado = Controlador.login(telefono, password);
+					if(estaLogueado) {
+						VentanaPrincipal = ...
+						...
+					} else{
+						JOptionPane.showMessageDialog(frame, "Error de Login");
+					}
+			*/
+			JFrame ventanaPrincipal = new VentanaPrincipal();
+			ventanaPrincipal.setVisible(true);
+			ventanaPrincipal.setLocationRelativeTo(frame);
 			frame.dispose();
 		});
 	}
