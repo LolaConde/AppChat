@@ -97,11 +97,20 @@ public class Usuario {
     	Map<Usuario, List<Mensaje>> mensajesPorUsuario = Stream.of(mensajesEnviados, mensajesRecibidos)
     			.flatMap(listaMensajes -> listaMensajes.stream())
     			.sorted((m1, m2) -> - m1.getFechaYHora().compareTo(m2.getFechaYHora()))
-    			.collect(Collectors.groupingBy(m -> m.getOtro(this)));
+    			.collect(Collectors.groupingBy(m -> m.obtenerElOtroUsuario(this)));
 
     	return mensajesPorUsuario.values().stream()
     		.map(lista -> lista.get(0))
     		.collect(Collectors.toList());
+    }
+  
+    
+    public List<Mensaje> getOtrosMensajes(Mensaje mensaje){
+    	return Stream.of(mensajesEnviados, mensajesRecibidos)
+    			.flatMap(listaMensajes -> listaMensajes.stream())
+    			.filter(m -> m.isMismaConversacion(mensaje))
+    			.sorted((m1, m2) -> m1.getFechaYHora().compareTo(m2.getFechaYHora()))
+    			.collect(Collectors.toList());
     }
     
     

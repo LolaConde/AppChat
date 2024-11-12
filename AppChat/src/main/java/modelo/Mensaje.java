@@ -36,11 +36,19 @@ public class Mensaje{
 	public Integer getNumeroDelReceptor() {
 		return receptor.getNumeroTelefono();
 	}
-	public Usuario getOtro(Usuario user) {
+	public Usuario obtenerElOtroUsuario(Usuario user) {
 		return user.equals(emisor) ? receptor : emisor;
 	}
 	public boolean isReceptor(Usuario user) {
-		return user.equals(receptor);
+		return receptor.equals(user);
+	}
+	
+	public boolean isEmisor(Usuario user) {
+		return emisor.equals(user);
+	}
+	
+	public boolean isMismaConversacion(Mensaje m) {
+		return (m.isEmisor(emisor) && m.isReceptor(receptor) || (m.isEmisor(receptor) && m.isReceptor(emisor)));
 	}
 
 	// Constructor: Mensaje de texto

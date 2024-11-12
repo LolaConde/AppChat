@@ -29,9 +29,14 @@ import java.awt.Dimension;
 import java.awt.Color;
 import javax.swing.ImageIcon;
 
+import tds.BubbleText;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
+
 public class VentanaPrincipal extends JFrame {
 
 	private JPanel contentPane;
+	JPanel panelChatActual;
 
 	/**
 	 * Launch the application.
@@ -75,13 +80,38 @@ public class VentanaPrincipal extends JFrame {
         
         // Crear el JList basado en el modelo
         JList<Mensaje> lista = new JList<>(modelo);
+        lista.addListSelectionListener(ev -> {
+        	if(lista.getSelectedValue() != null) {
+    			panelChatActual.removeAll();
+    			panelChatActual.revalidate();
+    			panelChatActual.repaint();
+    			for (Mensaje m : Controlador.getOtrosMensajes(lista.getSelectedValue())) {
+    				if(m.isEmisor(Controlador.getUsuarioActual())) {
+    					panelChatActual.add(new BubbleText(panelChatActual,
+    							m.getTexto(),
+    							Color.LIGHT_GRAY,
+    							"", 
+    							BubbleText.SENT));
+    				}
+    				else {
+    					panelChatActual.add(new BubbleText(panelChatActual,
+    							m.getTexto(),
+    							Color.PINK,
+    							"", 
+    							BubbleText.RECEIVED));
+    				}
+    			}
+    		}
+        });
         lista.setBackground(new Color(238, 238, 238));
         lista.setCellRenderer(new MensajeCellRenderer());
 
 		panelChatsRecientes.add(new JScrollPane(lista), BorderLayout.CENTER);
 		
-		JPanel panelChatActual = new JPanel();
+		panelChatActual = new JPanel();
 		contentPane.add(panelChatActual, BorderLayout.CENTER);
+		panelChatActual.setLayout(new BoxLayout(panelChatActual, BoxLayout.Y_AXIS));
+		panelChatActual.setSize(400,700);
 		
 		JPanel botonera = new JPanel();
 		botonera.setBorder(new EmptyBorder(0, 0, 10, 0));
@@ -131,6 +161,7 @@ public class VentanaPrincipal extends JFrame {
 		botonera.add(botonPremium);
 		
 		Component horizontalStrut_3 = Box.createHorizontalStrut(20);
+		horizontalStrut_3.setPreferredSize(new Dimension(10, 0));
 		botonera.add(horizontalStrut_3);
 		
 		JLabel lblImagen = new JLabel("Imagen");

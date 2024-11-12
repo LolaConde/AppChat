@@ -68,4 +68,8 @@ public class Controlador {
 	public static boolean isUsuarioActual(Usuario usuario) {
 		return usuarioActual.equals(usuario);
 	}
+	
+	public static List<Mensaje> getOtrosMensajes(Mensaje m){
+		return usuarioActual.getOtrosMensajes(m);
+	}
 }

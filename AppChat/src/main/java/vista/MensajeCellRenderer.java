@@ -56,7 +56,7 @@ public class MensajeCellRenderer extends JPanel
 			boolean isSelected, boolean cellHasFocus) {
 		
 		// Set the text
-		Usuario usuario = Controlador.isUsuarioActual(mensaje.getEmisor()) ? mensaje.getReceptor() : mensaje.getEmisor();
+		Usuario usuario = mensaje.obtenerElOtroUsuario(Controlador.getUsuarioActual());
 		String nombreDeUsuario = Controlador.getNombreDeContacto(usuario);
 		userLabel.setText(nombreDeUsuario);
 
@@ -74,12 +74,17 @@ public class MensajeCellRenderer extends JPanel
 		mensajeLabel.setText(" "+ mensaje.getTexto() + " ");
 		
 		// Set background and foreground based on selection
+		list.setSelectionBackground(new Color(250, 234, 251));
 		if (isSelected) {
 			setBackground(list.getSelectionBackground());
 			setForeground(list.getSelectionForeground());
+			panel.setBackground(list.getSelectionBackground());
+			panel.setForeground(list.getSelectionForeground());
 		} else {
 			setBackground(list.getBackground());
 			setForeground(list.getForeground());
+			panel.setBackground(list.getBackground());
+			panel.setForeground(list.getForeground());
 		}
 
 		return this;
