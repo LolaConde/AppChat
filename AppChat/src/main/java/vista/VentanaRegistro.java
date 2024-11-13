@@ -9,6 +9,8 @@ import javax.swing.text.AttributeSet.ColorAttribute;
 
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.Color;
 import javax.swing.SwingConstants;
@@ -108,8 +110,7 @@ public class VentanaRegistro extends JFrame {
 	
 	private void addManejadorProcesarRegistro(JButton button) {
 		button.addActionListener(ev -> {
-			limpiarDatos();
-			Boolean datosCorrectos = datosIntroducidosCorrectos();
+			Boolean datosCorrectos = comprobarDatosIntroducidos();
 		});
 	}
 	
@@ -317,23 +318,32 @@ public class VentanaRegistro extends JFrame {
 		return scrollPane;
 	}
 	
-	private boolean datosIntroducidosCorrectos() {
+	private boolean comprobarDatosIntroducidos() {
+		limpiarDatos();
+		
 		boolean datosCorrectos = true;
+		String explicacionDeErrores = "";
 		// nombre no vacío
 		if (nombreTxtField.getText().trim().isEmpty()) {
 			txtNombre.setForeground(Color.RED);
 			datosCorrectos = false;
+			explicacionDeErrores += "El nombre no puede estar vacío" + '\n';
 		}
 		// apellidos no vacíos
 		if (apellidosTxtField.getText().trim().isEmpty()) {
 			txtApellidos.setForeground(Color.RED);
 			datosCorrectos = false;
+			explicacionDeErrores += "Los apellidos no pueden estar vacíos" + '\n';
 		}
 		// teléfono no vacío y sólo tiene números
-		if (TelefonoTxtField.getText().isEmpty() || TelefonoTxtField.getText().chars()
-																				.mapToObj(c -> (char) c)
-																				.anyMatch(c -> !Character.isDigit(c))) {
+		if (TelefonoTxtField.getText().isEmpty()) {
 			txtTelefono.setForeground(Color.RED);
+			explicacionDeErrores += "El teléfono no puede estar vacío" + '\n';
+			datosCorrectos = false;
+		}
+		else if(TelefonoTxtField.getText().chars().mapToObj(c -> (char) c).anyMatch(c -> !Character.isDigit(c))) {
+			txtTelefono.setForeground(Color.RED);
+			explicacionDeErrores += "El teléfono solo puede tener números" + '\n';
 			datosCorrectos = false;
 		}
 		// Fecha de nacimiento anterior a hoy
@@ -341,21 +351,25 @@ public class VentanaRegistro extends JFrame {
 		if(FechaNacimientoDateChooser.getDate() == null || FechaNacimientoDateChooser.getDate().after(hoy)) {
 			txtFechaNacimiento.setForeground(Color.RED);
 			datosCorrectos = false;
-		}
-		// contraseña no vacía
-		if(passwordField1.getPassword().length == 0) {
-			txtPass1.setForeground(Color.RED);
-			datosCorrectos = false;
-		}
-		if(passwordField2.getPassword().length == 0) {
-			txtPass2.setForeground(Color.RED);
-			datosCorrectos = false;
+			explicacionDeErrores += "La fecha de nacimiento debe contener una fecha anterior a hoy" + '\n';
 		}
 		// contraseñas iguales
 		if(!Arrays.equals(passwordField1.getPassword(), passwordField2.getPassword())) {
 			txtPass1.setForeground(Color.RED);
 			txtPass2.setForeground(Color.RED);
 			datosCorrectos = false;
+			explicacionDeErrores += "Los dos campos de contraseña deben contener el mismo valor" + '\n';
+		}
+		// contraseña no vacía
+		if(passwordField1.getPassword().length == 0) {
+			txtPass1.setForeground(Color.RED);
+			datosCorrectos = false;
+			explicacionDeErrores += "El campo de la contraseña 1 está vacío: La contraseña no puede estar vacía" + '\n';
+		}
+		if(passwordField2.getPassword().length == 0) {
+			txtPass2.setForeground(Color.RED);
+			datosCorrectos = false;
+			explicacionDeErrores += "El campo de la contraseña 2 está vacío: La contraseña no puede estar vacía" + '\n';
 		}
 		// url de la imagen hace referencia a una imagen existente
 		URL url = null;
@@ -367,6 +381,10 @@ public class VentanaRegistro extends JFrame {
 		} catch (Exception e) {
 			txtImagen.setForeground(Color.RED);
 			datosCorrectos = false;
+			explicacionDeErrores += "La url de la imagen debe hacer referencia a una imagen existente" + '\n';
+		}
+		if (!datosCorrectos) {
+			JOptionPane.showMessageDialog(contentPane, explicacionDeErrores, "Campos erroneos", JOptionPane.ERROR_MESSAGE);
 		}
 		return datosCorrectos;
 	}
