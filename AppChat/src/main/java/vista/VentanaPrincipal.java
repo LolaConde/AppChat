@@ -74,7 +74,7 @@ public class VentanaPrincipal extends JFrame {
 		
 		// Crear un modelo de lista y agregar elementos
         DefaultListModel<Mensaje> modelo = new DefaultListModel<>();
-        for (Mensaje m : Controlador.getUltimosMensajes()) {
+        for (Mensaje m : Controlador.getUnicaInstancia().getUltimosMensajes()) {
         	modelo.addElement(m);
         }
         
@@ -85,8 +85,8 @@ public class VentanaPrincipal extends JFrame {
     			panelChatActual.removeAll();
     			panelChatActual.revalidate();
     			panelChatActual.repaint();
-    			for (Mensaje m : Controlador.getOtrosMensajes(lista.getSelectedValue())) {
-    				if(m.isEmisor(Controlador.getUsuarioActual())) {
+    			for (Mensaje m : Controlador.getUnicaInstancia().getOtrosMensajes(lista.getSelectedValue())) {
+    				if(m.isEmisor(Controlador.getUnicaInstancia().getUsuarioActual())) {
     					panelChatActual.add(new BubbleText(panelChatActual,
     							m.getTexto(),
     							Color.LIGHT_GRAY,
@@ -166,14 +166,18 @@ public class VentanaPrincipal extends JFrame {
 		
 		JLabel lblImagen = new JLabel("Imagen");
 		try {
-			URL imageUrl = new URL(Controlador.getImagenDePerfil());
+			URL imageUrl = new URL(Controlador.getUnicaInstancia().getImagenDePerfil());
 			Image image = ImageIO.read(imageUrl);
 			ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(25, 25, Image.SCALE_SMOOTH));
 			lblImagen.setIcon(imageIcon);
 			lblImagen.setText("");
 		} catch (IOException e) {
+			ImageIcon imageIconOriginal = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/usuario-sin-foto.png"));
+			Image image = imageIconOriginal.getImage();
+			ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(25, 25, Image.SCALE_SMOOTH));
+			lblImagen.setIcon(imageIcon);
+			lblImagen.setText("");
 			e.printStackTrace();
-			lblImagen.setIcon(null); // Default to no image if there was an issue
 		}
 		botonera.add(lblImagen);
 	}

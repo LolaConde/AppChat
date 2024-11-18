@@ -56,19 +56,23 @@ public class MensajeCellRenderer extends JPanel
 			boolean isSelected, boolean cellHasFocus) {
 		
 		// Set the text
-		Usuario usuario = mensaje.obtenerElOtroUsuario(Controlador.getUsuarioActual());
-		String nombreDeUsuario = Controlador.getNombreDeContacto(usuario);
+		Usuario usuario = mensaje.obtenerElOtroUsuario(Controlador.getUnicaInstancia().getUsuarioActual());
+		String nombreDeUsuario = Controlador.getUnicaInstancia().getNombreDeContacto(usuario);
 		userLabel.setText(nombreDeUsuario);
 
 		// Load the image from a random URL (for example, using "https://robohash.org")
 		try {
 			URL imageUrl = new URL(usuario.getImagenPerfil());
+			System.out.println("ImagenUrl = " + imageUrl);
 			Image image = ImageIO.read(imageUrl);
 			ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(50, 50, Image.SCALE_SMOOTH));
 			imageLabel.setIcon(imageIcon);
-		} catch (IOException e) {
+		} catch (Exception e) {
+			ImageIcon imageIconOriginal = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/usuario-sin-foto.png"));
+			Image image = imageIconOriginal.getImage();
+			ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+			imageLabel.setIcon(imageIcon);
 			e.printStackTrace();
-			imageLabel.setIcon(null); // Default to no image if there was an issue
 		}
 		
 		mensajeLabel.setText(" "+ mensaje.getTexto() + " ");

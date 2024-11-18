@@ -11,15 +11,17 @@ import modelo.RepositorioUsuarios;
 import modelo.Usuario;
 
 public class Controlador {
-	private static Usuario usuarioActual;
+	private static Controlador unicaInstancia;
+	
+	private Usuario usuarioActual;
 	private RepositorioUsuarios repositorioUsuarios;
 	private GeneradorPDF servicioPDF;
 	
-	public static Usuario getUsuarioActual() {
+	public Usuario getUsuarioActual() {
 		return usuarioActual;
 	}
 	
-	static {
+	private Controlador() {
 		// Añadir ejemplo
 		
 		// Usuario actual
@@ -45,31 +47,37 @@ public class Controlador {
 			e.printStackTrace();
 		}
 		usuarioActual.enviarMensaje(u2, "Bien, ¿y tu?");
-		
+	}
+	
+	public static Controlador getUnicaInstancia() {
+		if (unicaInstancia == null) {
+			unicaInstancia = new Controlador();
+		}
+		return unicaInstancia;
 	}
 	
 	public void enviarMensaje(Usuario emisor, Usuario receptor, String texto) {
 		emisor.enviarMensaje(receptor, texto);
 	}
 	
-	public static List<Mensaje> getUltimosMensajes() {
+	public List<Mensaje> getUltimosMensajes() {
 		return usuarioActual.getUltimosMensajes();
 	}
 	
-	public static String getImagenDePerfil() {
+	public String getImagenDePerfil() {
 		return usuarioActual.getImagenPerfil();
 	}
 	
-	public static String getNombreDeContacto(Usuario usuario) {
+	public String getNombreDeContacto(Usuario usuario) {
 		String nombreDeContacto = usuarioActual.getNombreContacto(usuario);
 		return nombreDeContacto == null ? Integer.toString(usuario.getNumeroTelefono()) : nombreDeContacto;
 	}
 	
-	public static boolean isUsuarioActual(Usuario usuario) {
+	public boolean isUsuarioActual(Usuario usuario) {
 		return usuarioActual.equals(usuario);
 	}
 	
-	public static List<Mensaje> getOtrosMensajes(Mensaje m){
+	public List<Mensaje> getOtrosMensajes(Mensaje m){
 		return usuarioActual.getOtrosMensajes(m);
 	}
 }
