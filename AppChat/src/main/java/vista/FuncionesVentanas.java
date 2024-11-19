@@ -12,9 +12,11 @@ public class FuncionesVentanas {
 	
 	private static final ImageIcon ICONO_APP = new ImageIcon(FuncionesVentanas.class.getResource("/vista/imagenes/icono-appchat.png"));
 	
-	public static void addManejadorLabelPassword(JTextField passwordField) {
+	public static final ImageIcon ICONO_USUARIO_SIN_FOTO = new ImageIcon(FuncionesVentanas.class.getResource("/vista/imagenes/usuario-sin-foto.png"));
+
+	public static void addManejadorFieldTelefono(JTextField telefonoField) {
 		// El teléfono solo puede contener números
-		passwordField.addKeyListener(new KeyAdapter() {
+		telefonoField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();

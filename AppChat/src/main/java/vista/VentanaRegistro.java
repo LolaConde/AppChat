@@ -175,7 +175,7 @@ public class VentanaRegistro extends JFrame {
 		
 		// Campo teléfono: field
 		TelefonoTxtField = new JTextField();
-		FuncionesVentanas.addManejadorLabelPassword(TelefonoTxtField);
+		FuncionesVentanas.addManejadorFieldTelefono(TelefonoTxtField);
 		GridBagConstraints gbc_TelefonoTxtField = new GridBagConstraints();
 		gbc_TelefonoTxtField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_TelefonoTxtField.insets = new Insets(0, 0, 5, 5);

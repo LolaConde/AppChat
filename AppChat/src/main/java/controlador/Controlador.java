@@ -56,6 +56,10 @@ public class Controlador {
 		return unicaInstancia;
 	}
 	
+	public Usuario obtenerUsuario(Mensaje mensaje) {
+		return mensaje.obtenerElOtroUsuario(usuarioActual);
+	}
+	
 	public void enviarMensaje(Usuario emisor, Usuario receptor, String texto) {
 		emisor.enviarMensaje(receptor, texto);
 	}

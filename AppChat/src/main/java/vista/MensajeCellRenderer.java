@@ -56,7 +56,7 @@ public class MensajeCellRenderer extends JPanel
 			boolean isSelected, boolean cellHasFocus) {
 		
 		// Set the text
-		Usuario usuario = mensaje.obtenerElOtroUsuario(Controlador.getUnicaInstancia().getUsuarioActual());
+		Usuario usuario = Controlador.getUnicaInstancia().obtenerUsuario(mensaje);
 		String nombreDeUsuario = Controlador.getUnicaInstancia().getNombreDeContacto(usuario);
 		userLabel.setText(nombreDeUsuario);
 
@@ -68,8 +68,7 @@ public class MensajeCellRenderer extends JPanel
 			ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(50, 50, Image.SCALE_SMOOTH));
 			imageLabel.setIcon(imageIcon);
 		} catch (Exception e) {
-			ImageIcon imageIconOriginal = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/usuario-sin-foto.png"));
-			Image image = imageIconOriginal.getImage();
+			Image image = FuncionesVentanas.ICONO_USUARIO_SIN_FOTO.getImage();
 			ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(50, 50, Image.SCALE_SMOOTH));
 			imageLabel.setIcon(imageIcon);
 			e.printStackTrace();

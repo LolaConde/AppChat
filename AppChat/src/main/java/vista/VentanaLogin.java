@@ -130,7 +130,7 @@ public class VentanaLogin {
 		
 		// Campo teléfono: field
 		JTextField telfTxtField = new JTextField();
-		FuncionesVentanas.addManejadorLabelPassword(telfTxtField);
+		FuncionesVentanas.addManejadorFieldTelefono(telfTxtField);
 		GridBagConstraints gbc_telfTxtField = new GridBagConstraints();
 		gbc_telfTxtField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_telfTxtField.insets = new Insets(0, 0, 5, 5);

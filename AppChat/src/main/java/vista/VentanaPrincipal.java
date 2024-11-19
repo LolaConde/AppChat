@@ -36,6 +36,9 @@ import javax.swing.event.ListSelectionEvent;
 public class VentanaPrincipal extends JFrame {
 
 	private JPanel contentPane;
+	private static final ImageIcon ICONO_ENVIAR_MENSAJE = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/enviar.png"));
+	private static final ImageIcon ICONO_BUSCAR_MENSAJES = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/buscar.png"));
+	private static final ImageIcon ICONO_AGENDA_CONTACTOS = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/agenda.png"));
 	JPanel panelChatActual;
 
 	/**
@@ -131,7 +134,7 @@ public class VentanaPrincipal extends JFrame {
 		botonera.add(horizontalStrut);
 		
 		JButton botonEnviar = new JButton("");
-		botonEnviar.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/enviar.png")));
+		botonEnviar.setIcon(ICONO_ENVIAR_MENSAJE);
 		botonEnviar.setBackground(new Color(247, 210, 249));
 		botonera.add(botonEnviar);
 		
@@ -140,7 +143,7 @@ public class VentanaPrincipal extends JFrame {
 		botonera.add(horizontalStrut_1);
 		
 		JButton botonBuscar = new JButton("");
-		botonBuscar.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/buscar.png")));
+		botonBuscar.setIcon(ICONO_BUSCAR_MENSAJES);
 		botonBuscar.setBackground(new Color(247, 210, 249));
 		botonera.add(botonBuscar);
 		
@@ -149,7 +152,7 @@ public class VentanaPrincipal extends JFrame {
 		botonera.add(horizontalStrut_2);
 		
 		JButton botonContactos = new JButton("");
-		botonContactos.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/agenda.png")));
+		botonContactos.setIcon(ICONO_AGENDA_CONTACTOS);
 		botonContactos.setBackground(new Color(247, 210, 249));
 		botonera.add(botonContactos);
 		
@@ -172,8 +175,7 @@ public class VentanaPrincipal extends JFrame {
 			lblImagen.setIcon(imageIcon);
 			lblImagen.setText("");
 		} catch (IOException e) {
-			ImageIcon imageIconOriginal = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/usuario-sin-foto.png"));
-			Image image = imageIconOriginal.getImage();
+			Image image = FuncionesVentanas.ICONO_USUARIO_SIN_FOTO.getImage();
 			ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(25, 25, Image.SCALE_SMOOTH));
 			lblImagen.setIcon(imageIcon);
 			lblImagen.setText("");
