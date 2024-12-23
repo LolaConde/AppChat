@@ -2,6 +2,7 @@ package modelo;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -30,6 +31,9 @@ public class Usuario {
     private boolean isPremium;
     private Descuento descuento;
     
+    // Codigo
+    private int codigo;
+    
     // Constructor
     public Usuario(String nombreCompleto, String password, int numeroTelefono, String email, LocalDate fechaNacimiento,
 			String imagenPerfil, String saludo) {
@@ -48,6 +52,8 @@ public class Usuario {
 		//Premium
 		this.isPremium = false;
 		this.descuento = null;
+		// Codigo
+		this.codigo = 0;
 	}
     
     // Constructor: sin saludo
@@ -57,8 +63,20 @@ public class Usuario {
     	this(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, SALUDO_POR_DEFECTO);
     }
     
+    public void setCodigo(int codigo) {
+		this.codigo = codigo;
+	}
+
+	public int getCodigo() {
+		return codigo;
+	}
+    
     public int getNumeroTelefono() {
     	return numeroTelefono;
+    }
+    
+    public boolean isPremium() {
+    	return this.isPremium;
     }
     
     public void setImagenPerfil(String imagen) {
@@ -75,6 +93,27 @@ public class Usuario {
     		}
     	}
     	return null;
+    }
+    
+    public String getNombre() {
+    	return this.nombreCompleto;
+    }
+    
+    public String getPassword() {
+    	return this.password;
+    }
+    
+    
+    public String getEmail() {
+    	return this.email;
+    }
+    
+    public LocalDate getFechaNacimiento() {
+    	return this.fechaNacimiento;
+    }
+    
+    public String getSaludo() {
+    	return this.saludo;
     }
     
     public void addContactoIndividual(Usuario usuario, String nombre) {
@@ -111,6 +150,10 @@ public class Usuario {
     			.filter(m -> m.isMismaConversacion(mensaje))
     			.sorted((m1, m2) -> m1.getFechaYHora().compareTo(m2.getFechaYHora()))
     			.collect(Collectors.toList());
+    }
+    
+    public void setPremium(boolean b) {
+    	isPremium = b;
     }
     
     
