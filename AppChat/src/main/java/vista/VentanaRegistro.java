@@ -28,10 +28,15 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 
 import com.toedter.calendar.JDateChooser;
+
+import controlador.Controlador;
+
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.imageio.ImageIO;
@@ -56,6 +61,7 @@ public class VentanaRegistro extends JFrame {
 	private JLabel txtPass2;
 	private JLabel imagenPerfil;
 	private JLabel txtImagen;
+	private JTextArea saludoField;
 	
 	/**
 	 * Create the frame.
@@ -111,6 +117,14 @@ public class VentanaRegistro extends JFrame {
 	private void addManejadorProcesarRegistro(JButton button) {
 		button.addActionListener(ev -> {
 			Boolean datosCorrectos = comprobarDatosIntroducidos();
+			if (datosCorrectos) {
+				Controlador.getUnicaInstancia().registrarUsuario(nombreTxtField.getText() + " " + apellidosTxtField.getText(), new String(passwordField1.getPassword()), Integer.parseInt(TelefonoTxtField.getText()), "", FechaNacimientoDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), imagenTxtField.getText(), saludoField.getText());
+				JOptionPane.showMessageDialog(contentPane, "Usuario registrado correctamente", "Registro correcto", JOptionPane.PLAIN_MESSAGE);
+				// Ir al login
+				VentanaLogin ventanaLogin = new VentanaLogin();
+				ventanaLogin.mostrarVentana(VentanaRegistro.this);
+				VentanaRegistro.this.dispose();
+			}
 		});
 	}
 	
@@ -270,7 +284,7 @@ public class VentanaRegistro extends JFrame {
 		gbc_scrollPaneSaludo.fill = GridBagConstraints.BOTH;
 		gbc_scrollPaneSaludo.gridx = 3;
 		gbc_scrollPaneSaludo.gridy = 9;
-		panelDatos.add(textAreaConScroll(), gbc_scrollPaneSaludo);
+		panelDatos.add(textAreaConScrollSaludo(), gbc_scrollPaneSaludo);
 		
 		// Campo imagen: Texto
 		txtImagen = new JLabel("Imagen:");
@@ -305,15 +319,15 @@ public class VentanaRegistro extends JFrame {
 		return panelDatos;
 	}
 	
-	private JScrollPane textAreaConScroll() {
+	private JScrollPane textAreaConScrollSaludo() {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		// Text area
-		JTextArea textArea = new JTextArea();
-		textArea.setLineWrap(true);
-		textArea.setWrapStyleWord(true);
-		scrollPane.setViewportView(textArea);
+		saludoField = new JTextArea();
+		saludoField.setLineWrap(true);
+		saludoField.setWrapStyleWord(true);
+		scrollPane.setViewportView(saludoField);
 		
 		return scrollPane;
 	}
