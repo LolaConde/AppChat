@@ -4,6 +4,8 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.BorderLayout;
 import java.awt.Font;
 import javax.swing.SwingConstants;
@@ -23,6 +25,9 @@ import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import java.awt.Insets;
 import javax.swing.UIManager;
+
+import controlador.Controlador;
+
 import javax.swing.JPasswordField;
 import java.awt.Color;
 import java.awt.event.KeyAdapter;
@@ -35,6 +40,8 @@ import java.awt.event.MouseEvent;
 public class VentanaLogin {
 
 	private JFrame frame;
+	private JTextField telfTxtField;
+	private JPasswordField passwordField;
 
 	/**
 	 * Launch the application.
@@ -129,7 +136,7 @@ public class VentanaLogin {
 		panelLogin.add(telfTxt, gbc_telfTxt);
 		
 		// Campo teléfono: field
-		JTextField telfTxtField = new JTextField();
+		telfTxtField = new JTextField();
 		FuncionesVentanas.addManejadorFieldTelefono(telfTxtField);
 		GridBagConstraints gbc_telfTxtField = new GridBagConstraints();
 		gbc_telfTxtField.fill = GridBagConstraints.HORIZONTAL;
@@ -149,7 +156,7 @@ public class VentanaLogin {
 		panelLogin.add(passTxt, gbc_passTxt);
 		
 		// Campo contraseña: field
-		final JPasswordField passwordField = new JPasswordField();
+		passwordField = new JPasswordField();
 		passwordField.setColumns(20);
 		GridBagConstraints gbc_passwordField = new GridBagConstraints();
 		gbc_passwordField.insets = new Insets(0, 0, 5, 5);
@@ -194,19 +201,16 @@ public class VentanaLogin {
 	
 	private void addManejadorHacerLogin(JButton button) {
 		button.addActionListener(ev -> {
-			// TODO Obtener el teléfono y contraseña de la pantalla
-			/* TODO boolean estaLogueado = Controlador.login(telefono, password);
-					if(estaLogueado) {
-						VentanaPrincipal = ...
-						...
-					} else{
-						JOptionPane.showMessageDialog(frame, "Error de Login");
-					}
-			*/
-			JFrame ventanaPrincipal = new VentanaPrincipal();
-			ventanaPrincipal.setVisible(true);
-			ventanaPrincipal.setLocationRelativeTo(frame);
-			frame.dispose();
+			int telf = Integer.parseInt(this.telfTxtField.getText());
+			String passw = new String(this.passwordField.getPassword());
+			if(Controlador.getUnicaInstancia().login(telf, passw)) {
+				JFrame ventanaPrincipal = new VentanaPrincipal();
+				ventanaPrincipal.setVisible(true);
+				ventanaPrincipal.setLocationRelativeTo(frame);
+				frame.dispose();
+			} else {
+				JOptionPane.showMessageDialog(frame, "Error de login");
+			}
 		});
 	}
 

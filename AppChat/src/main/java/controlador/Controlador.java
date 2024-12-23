@@ -103,7 +103,7 @@ public class Controlador {
 		Optional<Usuario> optional_usuario = repositorioUsuarios.getUsuario(telf);
 		if (optional_usuario.isPresent()) {
 			Usuario u = optional_usuario.get();
-			if (u.getPassword() == passw) {
+			if (u.getPassword().equals(passw)) {
 				usuarioActual = u;
 				return true;
 			}
