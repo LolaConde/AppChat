@@ -18,4 +18,12 @@ public class GrupoDeContactos extends Contacto{
 	public GrupoDeContactos(List<ContactoIndividual> contactos, String nombre) {
 		this(contactos, nombre, null);
 	}
+	
+	public List<ContactoIndividual> getContactos(){
+		return this.contactos;
+	}
+	
+	public String getImagen() {
+		return this.imagen;
+	}
 }

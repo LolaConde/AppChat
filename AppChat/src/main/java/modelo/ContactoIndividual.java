@@ -3,7 +3,6 @@ package modelo;
 public class ContactoIndividual extends Contacto{
     private Usuario usuario;
     
-    // Constructor
     public ContactoIndividual(Usuario usuario, String nombre) {
     	super(nombre);
     	this.usuario = usuario;
@@ -11,5 +10,9 @@ public class ContactoIndividual extends Contacto{
     
     public boolean isUsuario(Usuario usuario) {
     	return this.usuario.equals(usuario);
+    }
+    
+    public Usuario getUsuario() {
+    	return this.usuario;
     }
 }

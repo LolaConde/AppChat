@@ -118,6 +118,7 @@ public class VentanaRegistro extends JFrame {
 		button.addActionListener(ev -> {
 			Boolean datosCorrectos = comprobarDatosIntroducidos();
 			if (datosCorrectos) {
+				// TODO: Si no añade un saludo, usar el registro de usuario sin especificar el saludo
 				Controlador.getUnicaInstancia().registrarUsuario(nombreTxtField.getText() + " " + apellidosTxtField.getText(), new String(passwordField1.getPassword()), Integer.parseInt(TelefonoTxtField.getText()), "", FechaNacimientoDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), imagenTxtField.getText(), saludoField.getText());
 				JOptionPane.showMessageDialog(contentPane, "Usuario registrado correctamente", "Registro correcto", JOptionPane.PLAIN_MESSAGE);
 				// Ir al login

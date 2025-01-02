@@ -1,10 +1,12 @@
 package modelo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -86,13 +88,13 @@ public class Usuario {
     public String getImagenPerfil() {
     	return this.imagenPerfil;
     }
-    public String getNombreContacto(Usuario usuario) {
+    public Optional<String> getNombreContacto(Usuario usuario) {
     	for (Contacto c : contactos) {
     		if (c instanceof ContactoIndividual && ((ContactoIndividual) c).isUsuario(usuario)) {
-    			return c.getNombre();
+    			return Optional.of(c.getNombre());
     		}
     	}
-    	return null;
+    	return Optional.empty();
     }
     
     public String getNombre() {
@@ -116,17 +118,52 @@ public class Usuario {
     	return this.saludo;
     }
     
-    public void addContactoIndividual(Usuario usuario, String nombre) {
-    	contactos.add(new ContactoIndividual(usuario, nombre));
+    public ContactoIndividual addContactoIndividual(Usuario usuario, String nombre) {
+    	ContactoIndividual contacto = new ContactoIndividual(usuario, nombre);
+    	contactos.add(contacto);
+    	return contacto;
     }
     
-    public void enviarMensaje(Usuario usuario, String texto) {
-    	Mensaje mensaje = new Mensaje(this, usuario, texto);
+    public Mensaje enviarMensaje(Usuario usuario, String texto) {
+    	Mensaje mensaje = new Mensaje(this, usuario, texto, LocalDateTime.now());
     	this.mensajesEnviados.add(mensaje);
     	usuario.recibirMensaje(mensaje);
+    	return mensaje;
     }
     
-    public void recibirMensaje(Mensaje mensaje) {
+    public List<Mensaje> getMensajesEnviados() {
+		return mensajesEnviados;
+	}
+
+	public List<Mensaje> getMensajesRecibidos() {
+		return mensajesRecibidos;
+	}
+
+	public List<Contacto> getContactos() {
+		return contactos;
+	}
+
+	public Descuento getDescuento() {
+		return descuento;
+	}
+
+	public void setMensajesEnviados(List<Mensaje> mensajesEnviados) {
+		this.mensajesEnviados = mensajesEnviados;
+	}
+
+	public void setMensajesRecibidos(List<Mensaje> mensajesRecibidos) {
+		this.mensajesRecibidos = mensajesRecibidos;
+	}
+
+	public void setContactos(List<Contacto> contactos) {
+		this.contactos = contactos;
+	}
+
+	public void setDescuento(Descuento descuento) {
+		this.descuento = descuento;
+	}
+
+	public void recibirMensaje(Mensaje mensaje) {
     	if (mensaje.isReceptor(this)) {
     		this.mensajesRecibidos.add(mensaje);
     	}

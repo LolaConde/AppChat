@@ -2,16 +2,27 @@ package modelo;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Mensaje{
-    private Usuario emisor;
-    private Usuario receptor;
-    private LocalDateTime fechaYHora;
-	private String texto;
-    private Integer emoticono;
+    private final Usuario emisor;
+    private final Usuario receptor;
+    private final LocalDateTime fechaYHora;
+	private final String texto; // Podría ser null
+    private final Integer emoticono; //  Podría ser null
+    private int codigo;
     
+    // Getters y setters
     public Usuario getEmisor() {
 		return emisor;
+	}
+    
+    public void setCodigo(int codigo) {
+		this.codigo = codigo;
+	}
+
+	public int getCodigo() {
+		return codigo;
 	}
 
 	public Usuario getReceptor() {
@@ -22,13 +33,19 @@ public class Mensaje{
 		return fechaYHora;
 	}
 
-	public String getTexto() {
-		return texto;
+	public Optional<String> getTexto() {
+		return Optional.ofNullable(texto);
 	}
 
-	public Integer getEmoticono() {
-		return emoticono;
+	public Optional<Integer> getEmoticono() {
+		return Optional.ofNullable(emoticono);
 	}
+	
+	public boolean isMensajeDeTexto() {
+		return null != texto;
+	}
+	
+	// Otros métodos
 	
 	public Integer getNumeroDelEmisor() {
 		return emisor.getNumeroTelefono();
@@ -52,21 +69,23 @@ public class Mensaje{
 	}
 
 	// Constructor: Mensaje de texto
-	public Mensaje(Usuario emisor, Usuario receptor, String texto) {
+	public Mensaje(Usuario emisor, Usuario receptor, String texto, LocalDateTime fechaYHora) {
 		this.emisor = emisor;
 		this.receptor = receptor;
 		this.texto = texto;
 		this.emoticono = null;
-		this.fechaYHora = LocalDateTime.now(); // El mensaje tiene la fecha/hora actual
+		this.fechaYHora = fechaYHora;
+		this.codigo = 0;
 	}
 	
 	// Constructor: Mensaje de 1 emoticono
-	public Mensaje(Usuario emisor, Usuario receptor, int emoticono) {
+	public Mensaje(Usuario emisor, Usuario receptor, int emoticono, LocalDateTime fechaYHora) {
 		this.emisor = emisor;
 		this.receptor = receptor;
 		this.emoticono = emoticono;
 		this.texto = null;
-		this.fechaYHora = LocalDateTime.now(); // El mensaje tiene la fecha/hora actual
+		this.fechaYHora = fechaYHora;
+		this.codigo = 0;
 	}
 	
 

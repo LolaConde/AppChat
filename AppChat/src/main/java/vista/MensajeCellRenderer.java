@@ -55,12 +55,12 @@ public class MensajeCellRenderer extends JPanel
 	public Component getListCellRendererComponent(JList<? extends Mensaje> list, Mensaje mensaje, int index,
 			boolean isSelected, boolean cellHasFocus) {
 		
-		// Set the text
+		// Nombre del contacto
 		Usuario usuario = Controlador.getUnicaInstancia().obtenerUsuario(mensaje);
 		String nombreDeUsuario = Controlador.getUnicaInstancia().getNombreDeContacto(usuario);
 		userLabel.setText(nombreDeUsuario);
 
-		// Load the image from a random URL (for example, using "https://robohash.org")
+		// Imagen del usuario
 		try {
 			URL imageUrl = new URL(usuario.getImagenPerfil());
 			System.out.println("ImagenUrl = " + imageUrl);
@@ -74,7 +74,10 @@ public class MensajeCellRenderer extends JPanel
 			e.printStackTrace();
 		}
 		
-		mensajeLabel.setText(" "+ mensaje.getTexto() + " ");
+		// Texto/emoticono del mensaje
+		String textoMensaje = mensaje.getTexto().isPresent() ? mensaje.getTexto().get() : "emoticono";
+		
+		mensajeLabel.setText(" "+ textoMensaje + " ");
 		
 		// Set background and foreground based on selection
 		list.setSelectionBackground(new Color(250, 234, 251));

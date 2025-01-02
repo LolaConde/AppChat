@@ -40,6 +40,7 @@ public class VentanaPrincipal extends JFrame {
 	private static final ImageIcon ICONO_BUSCAR_MENSAJES = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/buscar.png"));
 	private static final ImageIcon ICONO_AGENDA_CONTACTOS = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/agenda.png"));
 	JPanel panelChatActual;
+	private static final int TAMANO_LETRA_MENSAJES = 18;
 
 	/**
 	 * Launch the application.
@@ -89,19 +90,21 @@ public class VentanaPrincipal extends JFrame {
     			panelChatActual.revalidate();
     			panelChatActual.repaint();
     			for (Mensaje m : Controlador.getUnicaInstancia().getOtrosMensajes(lista.getSelectedValue())) {
-    				if(m.isEmisor(Controlador.getUnicaInstancia().getUsuarioActual())) {
+    				if(m.getEmoticono().isPresent()) {
     					panelChatActual.add(new BubbleText(panelChatActual,
-    							m.getTexto(),
+    							m.getEmoticono().get().intValue(),
     							Color.LIGHT_GRAY,
     							"", 
-    							BubbleText.SENT));
+    							Controlador.getUnicaInstancia().isUsuarioActualEmisor(m) ? BubbleText.SENT : BubbleText.RECEIVED,
+    							this.TAMANO_LETRA_MENSAJES));
     				}
     				else {
     					panelChatActual.add(new BubbleText(panelChatActual,
-    							m.getTexto(),
+    							m.getTexto().orElse(""),
     							Color.PINK,
     							"", 
-    							BubbleText.RECEIVED));
+    							Controlador.getUnicaInstancia().isUsuarioActualEmisor(m) ? BubbleText.SENT : BubbleText.RECEIVED,
+    							this.TAMANO_LETRA_MENSAJES));
     				}
     			}
     		}

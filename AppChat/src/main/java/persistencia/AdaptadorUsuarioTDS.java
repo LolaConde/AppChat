@@ -3,8 +3,13 @@ package persistencia;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
+import modelo.Contacto;
+import modelo.ContactoIndividual;
+import modelo.Mensaje;
 import modelo.Usuario;
 
 import tds.driver.FactoriaServicioPersistencia;
@@ -28,7 +33,7 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 	
 	@Override
 	public void registrarUsuario(Usuario usuario) {
-		// TODO Add mensajesEnviados, mensajesRecibidos, Descuento, 
+		// TODO Add Descuento
 		Entidad eUsuario = null;
 		
 		// Si la entidad esta registrada no la registra de nuevo
@@ -37,6 +42,15 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		} catch(NullPointerException e) {}
 		if (eUsuario != null) return;
 		
+		// registrar Contactos
+		AdaptadorContactoTDS adaptadorContacto = AdaptadorContactoTDS.getUnicaInstancia();
+		usuario.getContactos().stream().forEach(adaptadorContacto::registrarContacto);
+		
+		// Registrar Mensajes
+		AdaptadorMensajeTDS adaptadorMensaje = AdaptadorMensajeTDS.getUnicaInstancia();
+		usuario.getMensajesEnviados().stream().forEach(adaptadorMensaje::registrarMensaje);
+		usuario.getMensajesRecibidos().stream().forEach(adaptadorMensaje::registrarMensaje);
+
 		// Crear entidad Cliente
 		eUsuario = new Entidad();
 		eUsuario.setNombre("usuario");
@@ -48,7 +62,10 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 						new Propiedad("fechaNacimiento", usuario.getFechaNacimiento().toString()),
 						new Propiedad("imagenPerfil", usuario.getImagenPerfil()),
 						new Propiedad("saludo", usuario.getSaludo()),
-						new Propiedad("isPremium", usuario.isPremium() ? "true" : "false")
+						new Propiedad("isPremium", usuario.isPremium() ? "true" : "false"),
+						new Propiedad("contactos", obtenerCodigosContactos(usuario.getContactos())),
+						new Propiedad("mensajesEnviados", obtenerCodigosMensajes(usuario.getMensajesEnviados())),
+						new Propiedad("mensajesRecibidos", obtenerCodigosMensajes(usuario.getMensajesRecibidos()))
 						)));
 		
 		// Registrar entidad cliente
@@ -63,21 +80,20 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		List<Usuario> usuarios = new ArrayList<Usuario>();
 
 		for (Entidad eUsuario : eUsuarios) {
-			usuarios.add(recuperarCliente(eUsuario.getId()));
+			usuarios.add(recuperarUsuario(eUsuario.getId()));
 		}
 		return usuarios;
 	}
 	
-	public Usuario recuperarCliente(int codigo) {
-
-		// Si la entidad est� en el pool la devuelve directamente
-		/*if (PoolDAO.getUnicaInstancia().contiene(codigo))
-			return (Usuario) PoolDAO.getUnicaInstancia().getObjeto(codigo);*/
-
-		// si no, la recupera de la base de datos
+	@Override
+	public Usuario recuperarUsuario(int codigo) {
+		// Si está en el pool, se retorna
+		if (PoolDAO.getUnicaInstancia().contiene(codigo))
+			return (Usuario) PoolDAO.getUnicaInstancia().getObjeto(codigo);
+		
 		Entidad eUsuario = servPersistencia.recuperarEntidad(codigo);
 
-		// recuperar propiedades que no son objetos
+		// Recuperar propiedades que no son objetos
 		String nombreCompleto = servPersistencia.recuperarPropiedadEntidad(eUsuario, "nombreCompleto");
 		int numeroTelefono = Integer.parseInt(servPersistencia.recuperarPropiedadEntidad(eUsuario, "numeroTelefono"));
 		String password = servPersistencia.recuperarPropiedadEntidad(eUsuario, "password");
@@ -90,19 +106,101 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		Usuario usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, saludo);
 		usuario.setPremium(isPremium);
 		usuario.setCodigo(codigo);
-
-		// IMPORTANTE:a�adir el cliente al pool antes de llamar a otros
-		// adaptadores
-		//PoolDAO.getUnicaInstancia().addObjeto(codigo, cliente);
-
-		// recuperar propiedades que son objetos llamando a adaptadores
-		// ventas
-		//ventas = obtenerVentasDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eUsuario, "ventas"));
-
-		/*for (Venta v : ventas)
-			cliente.addVenta(v);*/
-
+		
+		// Añade usuario al pool
+		PoolDAO.getUnicaInstancia().addObjeto(codigo, usuario);
+		
+		// Recuperar propiedades que son objetos
+		List<Contacto> contactos = obtenerContactosDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eUsuario, "contactos"));
+		List<Mensaje> mensajesEnviados = this.obtenerMensajesDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eUsuario, "mensajesEnviados"));
+		List<Mensaje> mensajesRecibidos = this.obtenerMensajesDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eUsuario, "mensajesRecibidos"));
+		
+		usuario.setContactos(contactos);
+		usuario.setMensajesEnviados(mensajesEnviados);
+		usuario.setMensajesRecibidos(mensajesRecibidos);
+		
 		return usuario;
 	}
 	
+	private String obtenerCodigosContactos(List<Contacto> contactos) {
+		String resultado = "";
+		for (Contacto c : contactos) {
+			resultado += c.getCodigo() + " ";
+		}
+		return resultado;
+	}
+	
+	private List<Contacto> obtenerContactosDesdeCodigos(String codigos){
+		List<Contacto> contactos = new LinkedList<Contacto>();
+		StringTokenizer strTok = new StringTokenizer(codigos, " ");
+		AdaptadorContactoTDS adaptadorContacto = AdaptadorContactoTDS.getUnicaInstancia();
+		while (strTok.hasMoreTokens()) {
+			contactos.add(adaptadorContacto.recuperarContacto(Integer.valueOf((String) strTok.nextElement())));
+		}
+		return contactos;
+	}
+	
+	private String obtenerCodigosMensajes(List<Mensaje> mensajes){
+		String resultado = "";
+		for(Mensaje mensaje : mensajes) {
+			resultado += mensaje.getCodigo() + " ";
+		}
+		return resultado;
+	}
+	
+	private List<Mensaje> obtenerMensajesDesdeCodigos(String codigos){
+		List<Mensaje> mensajes = new LinkedList<Mensaje>();
+		StringTokenizer strTok = new StringTokenizer(codigos, " ");
+		AdaptadorMensajeTDS adaptadorMensaje = AdaptadorMensajeTDS.getUnicaInstancia();
+		while (strTok.hasMoreTokens()) {
+			mensajes.add(adaptadorMensaje.recuperarMensaje(Integer.valueOf((String) strTok.nextElement())));
+		}
+		return mensajes;
+	}
+
+	@Override
+	public void modificarUsuario(Usuario usuario) {
+		Entidad eUsuario = servPersistencia.recuperarEntidad(usuario.getCodigo());
+		
+		for (Propiedad prop : eUsuario.getPropiedades()) {
+			if(prop.getNombre().equals("codigo")) {
+				prop.setValor(String.valueOf(usuario.getCodigo()));
+			}
+			else if(prop.getNombre().equals("nombreCompleto")) {
+				prop.setValor(usuario.getNombre());
+			}
+			else if(prop.getNombre().equals("numeroTelefono")) {
+				prop.setValor(Integer.toString(usuario.getNumeroTelefono()));
+			}
+			else if(prop.getNombre().equals("password")) {
+				prop.setValor(usuario.getPassword());
+			}
+			else if(prop.getNombre().equals("email")) {
+				prop.setValor(usuario.getEmail());
+			}
+			else if(prop.getNombre().equals("fechaNacimiento")) {
+				prop.setValor(usuario.getFechaNacimiento().toString());
+			}
+			else if(prop.getNombre().equals("imagenPerfil")) {
+				prop.setValor(usuario.getImagenPerfil());
+			}
+			else if(prop.getNombre().equals("saludo")) {
+				prop.setValor(usuario.getSaludo());
+			}
+			else if(prop.getNombre().equals("isPremium")) {
+				prop.setValor(usuario.isPremium() ? "true" : "false");
+			}
+			else if(prop.getNombre().equals("contactos")) {
+				prop.setValor(obtenerCodigosContactos(usuario.getContactos()));
+			}
+			else if(prop.getNombre().equals("mensajesEnviados")) {
+				prop.setValor(obtenerCodigosMensajes(usuario.getMensajesEnviados()));
+			}
+			else if(prop.getNombre().equals("mensajesRecibidos")) {
+				prop.setValor(obtenerCodigosMensajes(usuario.getMensajesRecibidos()));
+			}
+			servPersistencia.modificarPropiedad(prop);
+		}
+		
+	}
 }
