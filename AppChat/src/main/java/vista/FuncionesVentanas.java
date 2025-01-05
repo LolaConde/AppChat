@@ -35,7 +35,7 @@ public class FuncionesVentanas {
 		
 		// Se define el caracter de ocultación de la contraseña si esta está oculta
 		if (password.getEchoChar() != (char) 0) {
-			password.setEchoChar('•');
+			password.setEchoChar('\u2022');
 		}
 		
 		final JLabel mostrar = new JLabel("");
@@ -52,7 +52,7 @@ public class FuncionesVentanas {
 				}
 				else {
 					mostrar.setIcon(ICONO_PASSWORD_OCULTA);
-					password.setEchoChar('•');
+					password.setEchoChar('\u2022');
 				}
 			}
 			// HAND_CURSOR si el ratón pasa por encima

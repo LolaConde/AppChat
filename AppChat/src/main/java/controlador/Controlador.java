@@ -68,6 +68,15 @@ public class Controlador {
 		adaptadorUsuario.modificarUsuario(receptor);
 	}
 	
+	public Mensaje enviarMensaje(Mensaje m, String texto) {
+		Usuario receptor = m.obtenerElOtroUsuario(usuarioActual);
+		Mensaje mensaje = usuarioActual.enviarMensaje(receptor, texto);
+		adaptadorMensaje.registrarMensaje(mensaje);
+		adaptadorUsuario.modificarUsuario(usuarioActual);
+		adaptadorUsuario.modificarUsuario(receptor);
+		return mensaje;
+	}
+	
 	public List<Mensaje> getUltimosMensajes() {
 		return usuarioActual.getUltimosMensajes();
 	}
