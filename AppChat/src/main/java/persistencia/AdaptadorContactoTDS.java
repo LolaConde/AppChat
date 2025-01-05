@@ -97,13 +97,17 @@ public class AdaptadorContactoTDS implements IAdaptadorContactoDAO {
 		if (servPersistencia.recuperarPropiedadEntidad(eContacto, "usuario").equals("")) {
 			// Es un contacto grupal
 			contactos = obtenerContactosIndDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eContacto, "contactos"));
-			return new GrupoDeContactos(contactos, nombre, imagen);
+			GrupoDeContactos grupo = new GrupoDeContactos(contactos, nombre, imagen);
+			grupo.setCodigo(codigo);
+			return grupo;
 		}
 		else {
 			// Es un contacto individual
 			AdaptadorUsuarioTDS adaptadorUsuario = AdaptadorUsuarioTDS.getUnicaInstancia();
 			usuario = adaptadorUsuario.recuperarUsuario(Integer.valueOf(servPersistencia.recuperarPropiedadEntidad(eContacto, "usuario")));
-			return new ContactoIndividual(usuario, nombre);
+			ContactoIndividual contacto = new ContactoIndividual(usuario, nombre);
+			contacto.setCodigo(codigo);
+			return contacto;
 		}
 	}
 	

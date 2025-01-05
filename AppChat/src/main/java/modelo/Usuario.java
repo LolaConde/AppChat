@@ -177,6 +177,7 @@ public class Usuario {
 
     	return mensajesPorUsuario.values().stream()
     		.map(lista -> lista.get(0))
+    		.sorted((m1, m2) -> - m1.getFechaYHora().compareTo(m2.getFechaYHora()))
     		.collect(Collectors.toList());
     }
   

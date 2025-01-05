@@ -94,6 +94,7 @@ public class AdaptadorMensajeTDS implements IAdaptadorMensajeDAO {
 			emoticono = Integer.valueOf(emoticonoString);
 			mensaje = new Mensaje(emisor, receptor, emoticono, fecha);
 		}
+		mensaje.setCodigo(codigo);
 		return mensaje;
 	}
 
