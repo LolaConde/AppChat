@@ -40,6 +40,11 @@ import javax.swing.SwingUtilities;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JPopupMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 /**
  * Ventana principal de la aplicación.
@@ -52,6 +57,7 @@ public class VentanaPrincipal extends JFrame {
 	private static final ImageIcon ICONO_AGENDA_CONTACTOS = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/agenda.png"));
 	JPanel panelDelChat;
 	JPanel panelCentral;
+	JLabel lblImagen;
 	JScrollPane scrollPane;
 	private static final int TAMANO_LETRA_MENSAJES = 14;
 	private JTextField textField;
@@ -216,21 +222,47 @@ public class VentanaPrincipal extends JFrame {
 		botonera.add(horizontalStrut_3);
 		
 		// Imagen de perfil del usuario
-		JLabel lblImagen = new JLabel("");
-		Image image;
-		try {
-			URL imageUrl = new URL(Controlador.getUnicaInstancia().getImagenDePerfil());
-			image = ImageIO.read(imageUrl);
-			
-		} catch (Exception e) {
-			image = FuncionesVentanas.ICONO_USUARIO_SIN_FOTO.getImage(); // Si no se puede acceder a la foto
-			e.printStackTrace();
-		}
-		ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(25, 25, Image.SCALE_SMOOTH));
-		lblImagen.setIcon(imageIcon);
+		lblImagen = new JLabel("");
+		muestraImagenDePerfil(Controlador.getUnicaInstancia().getImagenDePerfil());
 		botonera.add(lblImagen);
 		
+		// PopUp Menú: Cambio foto de perfil
+		JPopupMenu popupMenu = new JPopupMenu();
+		JMenuItem opcionCambiarFoto = new JMenuItem("Cambiar foto de perfil");
+		addManejadorCambioDeImagen(opcionCambiarFoto);
+		popupMenu.add(opcionCambiarFoto);
+		botonera.add(popupMenu);
+		
+		// PopUp Menú en la imagen de perfil del usuario
+		lblImagen.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				popupMenu.show(lblImagen, e.getX(), e.getY());
+			}
+		});
+		
 		return botonera;
+	}
+	
+	/**
+	 * Añade un listener a <code>menuItem</code>. Cuando se activa, solicita una URL de una nueva imagen de perfil, 
+	 * y la actualiza si es válida y accesible.
+	 * 
+	 * @param menuItem El elemento al que se le añadirá el ActionListener
+	 */
+	private void addManejadorCambioDeImagen(JMenuItem menuItem) {
+		menuItem.addActionListener(ev -> {
+			String nuevaImagen = JOptionPane.showInputDialog(this, "Introduce la url a la imagen:");
+			if(nuevaImagen != null) {
+				if(Controlador.getUnicaInstancia().cambiarImagenDePerfil(nuevaImagen)) {
+					muestraImagenDePerfil(nuevaImagen);
+					JOptionPane.showMessageDialog(this, "Cambio de imagen realizado", "Cambio realizado", JOptionPane.INFORMATION_MESSAGE);
+				}
+				else {
+					JOptionPane.showMessageDialog(this, "No se ha podido hacer el cambio de imagen", "Error con la imagen", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 	}
 	
 	/**
@@ -317,6 +349,26 @@ public class VentanaPrincipal extends JFrame {
 		panelChatsRecientes.add(scrollPaneUltimosMensajes, BorderLayout.CENTER);
 		
 		return panelChatsRecientes;
+	}
+	
+	/**
+	 * Muestra la imagen de perfil en la ventana, 
+	 * actualizando el componente <code>lblImage</code> con la imagen obtenida de la URL proporcionada.
+	 * 
+	 * @param url La url de la imagen de perfil a mostrar
+	 */
+	private void muestraImagenDePerfil(String url) {
+		Image image;
+		try {
+			URL imageUrl = new URL(url);
+			image = ImageIO.read(imageUrl);
+			
+		} catch (Exception e) {
+			image = FuncionesVentanas.ICONO_USUARIO_SIN_FOTO.getImage(); // Si no se puede acceder a la foto
+			e.printStackTrace();
+		}
+		ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(25, 25, Image.SCALE_SMOOTH));
+		lblImagen.setIcon(imageIcon);
 	}
 
 }

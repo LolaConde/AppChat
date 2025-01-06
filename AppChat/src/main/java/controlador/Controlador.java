@@ -1,10 +1,15 @@
 package controlador;
 
+import java.awt.Image;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import modelo.ContactoIndividual;
 import modelo.GeneradorPDF;
@@ -125,6 +130,20 @@ public class Controlador {
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean cambiarImagenDePerfil(String url) {
+		try {
+			URL imageUrl = new URL(url);
+			Image imageNueva = ImageIO.read(imageUrl);
+		} catch(Exception e) {
+			return false;
+		}
+		
+		// Si no hay excepción, la imagen es válida (la url apunta a una imagen accesible)
+		usuarioActual.setImagenPerfil(url);
+		adaptadorUsuario.modificarUsuario(usuarioActual);
+		return true;
 	}
 	
 	private void inicializarAdaptadores() {
