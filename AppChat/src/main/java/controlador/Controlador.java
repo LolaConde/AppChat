@@ -90,14 +90,8 @@ public class Controlador {
 		return usuarioActual.getImagenPerfil();
 	}
 	
-	public String getNombreDeContacto(Usuario usuario) {
-		Optional<String> nombreOptional = usuarioActual.getNombreContacto(usuario);
-		if(nombreOptional.isPresent()) {
-			return nombreOptional.get();
-		}
-		else {
-			return Integer.toString(usuario.getNumeroTelefono());
-		}
+	public Optional<String> getNombreDeContacto(Usuario usuario) {
+		return usuarioActual.getNombreContacto(usuario);
 	}
 	
 	public List<Mensaje> getOtrosMensajes(Mensaje m){
@@ -130,6 +124,12 @@ public class Controlador {
 			return true;
 		}
 		return false;
+	}
+	
+	public void addContactoIndividual(Usuario usuario, String nombre){
+		ContactoIndividual contacto = usuarioActual.addContactoIndividual(usuario, nombre);
+		adaptadorContacto.registrarContacto(contacto);
+		adaptadorUsuario.modificarUsuario(usuarioActual);
 	}
 	
 	public boolean cambiarImagenDePerfil(String url) {

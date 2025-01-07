@@ -14,6 +14,7 @@ import javax.swing.border.EmptyBorder;
 
 import controlador.Controlador;
 import modelo.Mensaje;
+import modelo.Usuario;
 
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
@@ -62,7 +63,9 @@ public class VentanaPrincipal extends JFrame {
 	private static final int TAMANO_LETRA_MENSAJES = 14;
 	private JTextField textField;
 	private JList<Mensaje> lista;
+	private JPopupMenu popupMenuAddContacto;
 	private DefaultListModel<Mensaje> modelo;
+	private Usuario usuarioConChatMostrado = null;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -121,6 +124,22 @@ public class VentanaPrincipal extends JFrame {
 		panelDelChat.setSize(400,700);
 		scrollPane.setViewportView(panelDelChat);
 		
+		// PopupMenu: Añadir contacto
+		popupMenuAddContacto = new JPopupMenu();
+		JMenuItem opcionAddContacto = new JMenuItem("Añadir contacto");
+		addManejadorAddContacto(opcionAddContacto);
+		popupMenuAddContacto.add(opcionAddContacto);
+		panelDelChat.add(popupMenuAddContacto);
+		
+		// PopUp Menú en el chat con el usuario no agregado
+		panelDelChat.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(SwingUtilities.isRightMouseButton(e) && usuarioConChatMostrado != null && !Controlador.getUnicaInstancia().getNombreDeContacto(usuarioConChatMostrado).isPresent())
+					popupMenuAddContacto.show(panelDelChat, e.getX(), e.getY());
+			}
+		});
+		
 		panelCentral.add(scrollPane, BorderLayout.CENTER);
 		
 	}
@@ -155,6 +174,25 @@ public class VentanaPrincipal extends JFrame {
 	    			lista.revalidate();
 	    			lista.repaint();
 				});
+	}
+	
+	/**
+	 * Añade a un JMenuItem indicado, un manejador de forma que si se selecciona el item, se
+	 * pide el nombre de contacto y se añade el contacto del usuario cuyo chat se muestra actualmente.
+	 */
+	private void addManejadorAddContacto(JMenuItem menuItem) {
+		menuItem.addActionListener(ev -> {
+			String nombreDeContacto = JOptionPane.showInputDialog(this, "Introduce el nombre del contacto:");
+			nombreDeContacto = nombreDeContacto.replaceAll("\\s+", " ").trim();
+			if (nombreDeContacto != null) {
+				if(nombreDeContacto.length() == 0) {
+					JOptionPane.showMessageDialog(this, "No se ha podido añadir el contacto, el nombre no puede estar vacío", "Error con el nombre", JOptionPane.ERROR_MESSAGE);
+				}else {
+					Controlador.getUnicaInstancia().addContactoIndividual(usuarioConChatMostrado, nombreDeContacto);
+					JOptionPane.showMessageDialog(this, "Contacto añadido correctamente", "Información", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
 	}
 	
 	/**
@@ -323,6 +361,8 @@ public class VentanaPrincipal extends JFrame {
         		List<Mensaje> mensajesDelChat = Controlador.getUnicaInstancia().getOtrosMensajes(mensajeSeleccionado);
         		mensajesDelChat.stream().forEachOrdered(this::mostrarMensaje);
         		
+        		usuarioConChatMostrado = Controlador.getUnicaInstancia().obtenerUsuario(mensajeSeleccionado);
+        		
     			panelCentral.revalidate();
         		panelCentral.repaint();
         		SwingUtilities.invokeLater(() -> {
@@ -330,6 +370,10 @@ public class VentanaPrincipal extends JFrame {
 			        vertical.setValue(vertical.getMaximum());
 			    });
     		}
+        	else {
+        		textField.setVisible(false);
+        		usuarioConChatMostrado = null;
+        	}
         });
 	}
 	

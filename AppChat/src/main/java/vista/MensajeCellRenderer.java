@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.io.IOException;
 import java.net.URL;
 import java.text.Collator;
+import java.util.Optional;
 import java.awt.Color;
 
 import javax.imageio.ImageIO;
@@ -57,8 +58,13 @@ public class MensajeCellRenderer extends JPanel
 		
 		// Nombre del contacto
 		Usuario usuario = Controlador.getUnicaInstancia().obtenerUsuario(mensaje);
-		String nombreDeUsuario = Controlador.getUnicaInstancia().getNombreDeContacto(usuario);
-		userLabel.setText(nombreDeUsuario);
+		Optional<String> nombreDeUsuario = Controlador.getUnicaInstancia().getNombreDeContacto(usuario);
+		if(nombreDeUsuario.isPresent()) {
+			userLabel.setText(nombreDeUsuario.get());
+		}
+		else {
+			userLabel.setText(Integer.toString(usuario.getNumeroTelefono()));
+		}
 
 		// Imagen del usuario
 		try {
