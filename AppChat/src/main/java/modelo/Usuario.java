@@ -120,6 +120,15 @@ public class Usuario {
     
     public ContactoIndividual addContactoIndividual(Usuario usuario, String nombre) {
     	ContactoIndividual contacto = new ContactoIndividual(usuario, nombre);
+    	// Si el contacto ya existía, se elimina y se guarda con el nuevo nombre
+    	Optional<ContactoIndividual> contactoExistente = contactos.stream()
+    			.filter(c -> c instanceof ContactoIndividual)
+    			.map(c -> (ContactoIndividual) c)
+    			.filter(c -> c.getUsuario().equals(usuario))
+    			.findAny();
+    	if(contactoExistente.isPresent()) {
+    		contactos.remove(contactoExistente.get());
+    	}
     	contactos.add(contacto);
     	return contacto;
     }

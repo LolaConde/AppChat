@@ -15,4 +15,8 @@ public class ContactoIndividual extends Contacto{
     public Usuario getUsuario() {
     	return this.usuario;
     }
+    
+    public String getImagen() {
+    	return usuario.getImagenPerfil();
+    }
 }

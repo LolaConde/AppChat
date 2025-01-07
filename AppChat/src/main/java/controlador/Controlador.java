@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import modelo.Contacto;
 import modelo.ContactoIndividual;
 import modelo.GeneradorPDF;
 import modelo.Mensaje;
@@ -71,6 +72,10 @@ public class Controlador {
 		adaptadorMensaje.registrarMensaje(mensaje);
 		adaptadorUsuario.modificarUsuario(emisor);
 		adaptadorUsuario.modificarUsuario(receptor);
+	}
+	
+	public List<Contacto> getContactos(){
+		return usuarioActual.getContactos();
 	}
 	
 	public Mensaje enviarMensaje(Mensaje m, String texto) {

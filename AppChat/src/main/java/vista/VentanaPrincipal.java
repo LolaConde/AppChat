@@ -243,6 +243,12 @@ public class VentanaPrincipal extends JFrame {
 		JButton botonContactos = new JButton("");
 		botonContactos.setIcon(ICONO_AGENDA_CONTACTOS);
 		botonContactos.setBackground(new Color(247, 210, 249));
+		botonContactos.addActionListener(ev -> {
+			VentanaContactos nuevaVentana = new VentanaContactos();
+	        nuevaVentana.setVisible(true);
+	        nuevaVentana.setLocationRelativeTo(this);
+			this.dispose();
+		});
 		botonera.add(botonContactos);
 		
 		// Horizontal Glue

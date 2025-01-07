@@ -19,4 +19,6 @@ public abstract class Contacto {
     public void setCodigo(int codigo) {
     	this.codigo = codigo;
     }
+    
+    public abstract String getImagen();
 }
