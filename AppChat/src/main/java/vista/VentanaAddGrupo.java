@@ -57,6 +57,7 @@ public class VentanaAddGrupo extends JFrame {
 	 */
 	public VentanaAddGrupo() {
 		setTitle("AppChat");
+		FuncionesVentanas.addIcon(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -148,7 +149,7 @@ public class VentanaAddGrupo extends JFrame {
 		panelNombreYFoto.add(panelFoto);
 		panelFoto.setLayout(new BoxLayout(panelFoto, BoxLayout.X_AXIS));
 		
-		JLabel lblFoto = new JLabel("Introduce la URL a la imagen: ");
+		JLabel lblFoto = new JLabel("Introduce la URL a la imagen (opcional): ");
 		panelFoto.add(lblFoto);
 		
 		fieldFotoDelGrupo = new JTextField();
