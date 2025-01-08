@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 import modelo.Contacto;
 import modelo.ContactoIndividual;
 import modelo.GeneradorPDF;
+import modelo.GrupoDeContactos;
 import modelo.Mensaje;
 import modelo.RepositorioUsuarios;
 import modelo.Usuario;
@@ -78,6 +79,12 @@ public class Controlador {
 		return usuarioActual.getContactos();
 	}
 	
+	public void addGrupo(List<ContactoIndividual> contactos, String nombre, String foto) {
+		GrupoDeContactos grupo = usuarioActual.addGrupoDeContactos(contactos, nombre, foto);
+		adaptadorContacto.registrarContacto(grupo);
+		adaptadorUsuario.modificarUsuario(usuarioActual);
+	}
+	
 	public Mensaje enviarMensaje(Mensaje m, String texto) {
 		Usuario receptor = m.obtenerElOtroUsuario(usuarioActual);
 		Mensaje mensaje = usuarioActual.enviarMensaje(receptor, texto);
@@ -123,15 +130,20 @@ public class Controlador {
 		Optional<Usuario> optionalUsuario = repositorioUsuarios.getUsuario(telefono);
 		if(optionalUsuario.isPresent()) {
 			Usuario usuario = optionalUsuario.get();
-			ContactoIndividual contacto = usuarioActual.addContactoIndividual(usuario, nombre);
-			adaptadorContacto.registrarContacto(contacto);
-			adaptadorUsuario.modificarUsuario(usuarioActual);
+			addContactoIndividual(usuario, nombre);
 			return true;
 		}
 		return false;
 	}
 	
 	public void addContactoIndividual(Usuario usuario, String nombre){
+		Optional<ContactoIndividual> contactoOptional = usuarioActual.actualizarContactoIndividual(usuario, nombre);
+		if(contactoOptional.isPresent()) {
+			//Ya existía el contacto y se ha actualizado su nombre
+			adaptadorContacto.modificarContacto(contactoOptional.get());
+			return;
+		}
+		// No existía y se tiene que crear
 		ContactoIndividual contacto = usuarioActual.addContactoIndividual(usuario, nombre);
 		adaptadorContacto.registrarContacto(contacto);
 		adaptadorUsuario.modificarUsuario(usuarioActual);
@@ -166,4 +178,6 @@ public class Controlador {
 	private void inicializarRepositorios() {
 		repositorioUsuarios = RepositorioUsuarios.getUnicaInstancia();
 	}
+	
+	
 }

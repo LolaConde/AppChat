@@ -19,6 +19,10 @@ public abstract class Contacto {
     public void setCodigo(int codigo) {
     	this.codigo = codigo;
     }
+  
+    public void setNombre(String nombre) {
+    	this.nombre = nombre;
+    }
     
     public abstract String getImagen();
 }

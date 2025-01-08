@@ -35,7 +35,7 @@ public class AdaptadorContactoTDS implements IAdaptadorContactoDAO {
 	public void registrarContacto(Contacto contacto) {
 		Entidad eContacto = null;
 		
-		// Si la entidad esta registrada no se registra de nuevo
+		// Si la entidad esta registrada, no se registra de nuevo
 		try {
 			eContacto = servPersistencia.recuperarEntidad(contacto.getCodigo());
 		}catch(NullPointerException e) {}
@@ -81,9 +81,46 @@ public class AdaptadorContactoTDS implements IAdaptadorContactoDAO {
 		// Asigna el código al contacto
 		contacto.setCodigo(eContacto.getId());
 	}
+	
+	@Override
+	public void modificarContacto(Contacto contacto) {
+		Entidad eContacto = servPersistencia.recuperarEntidad(contacto.getCodigo());
+		for(Propiedad prop : eContacto.getPropiedades()) {
+			if(prop.getNombre().equals("codigo")) {
+				prop.setValor(String.valueOf(contacto.getCodigo()));
+			}
+			else if(prop.getNombre().equals("nombre")) {
+				prop.setValor(contacto.getNombre());
+			}else if(prop.getNombre().equals("usuario")) {
+				if(contacto instanceof ContactoIndividual) {
+					Usuario usuario = ((ContactoIndividual) contacto).getUsuario();
+					prop.setValor(String.valueOf(usuario.getCodigo()));
+				} else {
+					prop.setValor("");
+				}
+			}else if(prop.getNombre().equals("imagen")) {
+				if(contacto instanceof GrupoDeContactos) {
+					prop.setValor(((GrupoDeContactos) contacto).getImagen());
+				}else {
+					prop.setValor("");
+				}
+			}else if(prop.getNombre().equals("contactos")) {
+				if(contacto instanceof GrupoDeContactos) {
+					prop.setValor(obtenerCodigosContactos(((GrupoDeContactos) contacto).getContactos()));
+				}
+				else {
+					prop.setValor("");
+				}
+			}
+			servPersistencia.modificarPropiedad(prop);
+		}
+	}
 
 	@Override
 	public Contacto recuperarContacto(int codigo) {
+		// Si está en el pool, se retorna
+		if (PoolDAO.getUnicaInstancia().contiene(codigo))
+			return (Contacto) PoolDAO.getUnicaInstancia().getObjeto(codigo);
 		// Recuperar el contacto de la base de datos
 		Entidad eContacto = servPersistencia.recuperarEntidad(codigo);
 		
@@ -99,6 +136,8 @@ public class AdaptadorContactoTDS implements IAdaptadorContactoDAO {
 			contactos = obtenerContactosIndDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eContacto, "contactos"));
 			GrupoDeContactos grupo = new GrupoDeContactos(contactos, nombre, imagen);
 			grupo.setCodigo(codigo);
+			// Añade contacto al pool
+			PoolDAO.getUnicaInstancia().addObjeto(codigo, grupo);
 			return grupo;
 		}
 		else {
@@ -107,6 +146,8 @@ public class AdaptadorContactoTDS implements IAdaptadorContactoDAO {
 			usuario = adaptadorUsuario.recuperarUsuario(Integer.valueOf(servPersistencia.recuperarPropiedadEntidad(eContacto, "usuario")));
 			ContactoIndividual contacto = new ContactoIndividual(usuario, nombre);
 			contacto.setCodigo(codigo);
+			// Añade contacto al pool
+			PoolDAO.getUnicaInstancia().addObjeto(codigo, contacto);
 			return contacto;
 		}
 	}

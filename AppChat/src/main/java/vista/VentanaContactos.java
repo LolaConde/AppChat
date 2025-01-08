@@ -1,6 +1,9 @@
 package vista;
 
 import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -8,6 +11,8 @@ import javax.swing.border.EmptyBorder;
 
 import controlador.Controlador;
 import modelo.Contacto;
+import modelo.ContactoIndividual;
+import modelo.GrupoDeContactos;
 import modelo.Mensaje;
 
 import java.awt.BorderLayout;
@@ -23,12 +28,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class VentanaContactos extends JFrame {
 
 	private JPanel contentPane;
 	private DefaultListModel<Contacto> modeloTodosContactos;
 	private JList<Contacto> listaTodosContactos;
+	private DefaultListModel<Contacto> modeloContactosDeGrupo;
+	private JList<Contacto> listaContactosDeGrupo;
 
 	/**
 	 * Launch the application.
@@ -68,6 +76,7 @@ public class VentanaContactos extends JFrame {
 		panelTodosLosContactos.setLayout(new BorderLayout(0, 0));
 		panelMostrarContactos.add(panelTodosLosContactos);
 		crearListaDeUltimosMensajes();
+		addManejadorMostrarContactosDeGrupo();
 		JScrollPane scrollTodosLosContactos = new JScrollPane(listaTodosContactos);
 		scrollTodosLosContactos.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		panelTodosLosContactos.add(scrollTodosLosContactos, BorderLayout.CENTER);
@@ -75,7 +84,7 @@ public class VentanaContactos extends JFrame {
 		JPanel panelContactosDeGrupo = new JPanel();
 		panelMostrarContactos.add(panelContactosDeGrupo);
 		
-		JList listaContactosDeGrupo = new JList();
+		crearListaDeContactosVacia();
 		panelContactosDeGrupo.add(listaContactosDeGrupo);
 		
 		JPanel panelAddContactos = new JPanel();
@@ -117,7 +126,8 @@ public class VentanaContactos extends JFrame {
 				// Actualizar la vista
 				modeloTodosContactos.removeAllElements();
 		        Controlador.getUnicaInstancia().getContactos().stream().forEachOrdered(modeloTodosContactos::addElement);
-				listaTodosContactos.revalidate();
+				
+		        listaTodosContactos.revalidate();
 				listaTodosContactos.repaint();
 			}
 		});
@@ -153,6 +163,38 @@ public class VentanaContactos extends JFrame {
         listaTodosContactos = new JList<>(modeloTodosContactos);
         listaTodosContactos.setBackground(new Color(238, 238, 238));
         listaTodosContactos.setCellRenderer(new ContactoCellRenderer());
+	}
+	/**
+	 * Inicializa <code>listaContactosDeGrupo</code> con una lista vacía
+	 */
+	private void crearListaDeContactosVacia() {
+		// Crear un modelo de lista
+        modeloContactosDeGrupo = new DefaultListModel<>();
+        
+        // Crear el JList basado en el modelo
+        listaContactosDeGrupo = new JList<>(modeloContactosDeGrupo);
+        listaContactosDeGrupo.setBackground(new Color(238, 238, 238));
+        listaContactosDeGrupo.setCellRenderer(new ContactoCellRenderer());
+	}
+
+	
+	/** Crea el listener de <code>listaTodosContactos</code> para,
+	 * en el caso de seleccionar un grupo, mostrar sus contactos individuales.
+	 * 
+	 * Estos se muestran en la lista listaContactosDeGrupo.
+	 */
+	private void addManejadorMostrarContactosDeGrupo() {
+		listaTodosContactos.addListSelectionListener(ev -> {
+			Contacto contactoSeleccionado = listaTodosContactos.getSelectedValue();
+			modeloContactosDeGrupo.removeAllElements();
+        	if(contactoSeleccionado != null && contactoSeleccionado instanceof GrupoDeContactos) {
+    			List<ContactoIndividual> contactosAMostrar = ((GrupoDeContactos) contactoSeleccionado).getContactos();
+    			contactosAMostrar.stream().forEach(modeloContactosDeGrupo::addElement);
+    		}
+    		listaContactosDeGrupo.revalidate();
+			listaContactosDeGrupo.repaint();
+			
+        });
 	}
 
 }

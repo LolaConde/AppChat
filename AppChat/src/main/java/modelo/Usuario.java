@@ -120,17 +120,29 @@ public class Usuario {
     
     public ContactoIndividual addContactoIndividual(Usuario usuario, String nombre) {
     	ContactoIndividual contacto = new ContactoIndividual(usuario, nombre);
-    	// Si el contacto ya existía, se elimina y se guarda con el nuevo nombre
+    	contactos.add(contacto);
+    	return contacto;
+    }
+    
+    public Optional<ContactoIndividual> actualizarContactoIndividual(Usuario usuario, String nombre) {
+    	// Si el contacto ya existía, se cambia su nombre
     	Optional<ContactoIndividual> contactoExistente = contactos.stream()
     			.filter(c -> c instanceof ContactoIndividual)
     			.map(c -> (ContactoIndividual) c)
     			.filter(c -> c.getUsuario().equals(usuario))
     			.findAny();
     	if(contactoExistente.isPresent()) {
-    		contactos.remove(contactoExistente.get());
+    		ContactoIndividual contacto = contactoExistente.get();
+    		contacto.setNombre(nombre);
+    		return Optional.of(contacto);
     	}
-    	contactos.add(contacto);
-    	return contacto;
+    	return Optional.empty();
+    }
+    
+    public GrupoDeContactos addGrupoDeContactos(List<ContactoIndividual> contactosDelGrupo, String nombre, String imagen) {
+    	GrupoDeContactos grupo = new GrupoDeContactos(contactosDelGrupo, nombre, imagen);
+    	contactos.add(grupo);
+    	return grupo;
     }
     
     public Mensaje enviarMensaje(Usuario usuario, String texto) {
