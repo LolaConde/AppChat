@@ -95,7 +95,7 @@ public class VentanaContactos extends JFrame {
 		panelAddContactos.add(horizontalGlue_2);
 		
 		JButton btnAddContactoIndividual = new JButton("Añadir Contacto");
-		btnAddContactoIndividual.setBackground(new Color(247, 210, 249));
+		btnAddContactoIndividual.setBackground(FuncionesVentanas.COLOR_ROSA);
 		btnAddContactoIndividual.addActionListener(ev -> {
 			JTextField fieldNumero = new JTextField();
 			JTextField fieldNombreContacto = new JTextField();
@@ -143,14 +143,14 @@ public class VentanaContactos extends JFrame {
 	        nuevaVentana.setLocationRelativeTo(this);
 			this.dispose();
 		});
-		btnAddGrupo.setBackground(new Color(247, 210, 249));
+		btnAddGrupo.setBackground(FuncionesVentanas.COLOR_ROSA);
 		panelAddContactos.add(btnAddGrupo);
 		
 		Component horizontalGlue_1 = Box.createHorizontalGlue();
 		panelAddContactos.add(horizontalGlue_1);
 		
 		JButton btnIrAVentanaPrincipal = new JButton("Volver a la ventana principal");
-		btnIrAVentanaPrincipal.setBackground(new Color(247, 210, 249));
+		btnIrAVentanaPrincipal.setBackground(FuncionesVentanas.COLOR_ROSA);
 		panelAddContactos.add(btnIrAVentanaPrincipal);
 		
 		Component horizontalGlue_3 = Box.createHorizontalGlue();

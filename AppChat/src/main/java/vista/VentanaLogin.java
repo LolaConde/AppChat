@@ -110,7 +110,7 @@ public class VentanaLogin {
 		// Campo botón registro
 		JButton botonRegistrar = new JButton("Registrar");
 		addManejadorIrAlRegistro(botonRegistrar);
-		botonRegistrar.setBackground(new Color(247, 210, 249));
+		botonRegistrar.setBackground(FuncionesVentanas.COLOR_ROSA);
 		botonRegistrar.setPreferredSize(new Dimension(90, 21));
 		panelRegistro.add(botonRegistrar);
 		
@@ -176,7 +176,7 @@ public class VentanaLogin {
 		// Campo login (botón)
 		JButton botonLogin = new JButton("Login");
 		botonLogin.setForeground(new Color(0, 0, 0));
-		botonLogin.setBackground(new Color(247, 210, 249));
+		botonLogin.setBackground(FuncionesVentanas.COLOR_ROSA);
 		addManejadorHacerLogin(botonLogin);
 		GridBagConstraints gbc_botonLogin = new GridBagConstraints();
 		gbc_botonLogin.gridwidth = 3;

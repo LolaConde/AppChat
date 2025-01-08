@@ -67,8 +67,7 @@ public class Controlador {
 		repositorioUsuarios.addUsuario(usuario);
 	}
 	
-	// TODO: Eliminar este método, es de prueba
-	public void enviarMensaje(Usuario emisor, Usuario receptor, String texto) {
+	private void enviarMensaje(Usuario emisor, Usuario receptor, String texto) {
 		Mensaje mensaje = emisor.enviarMensaje(receptor, texto);
 		adaptadorMensaje.registrarMensaje(mensaje);
 		adaptadorUsuario.modificarUsuario(emisor);
@@ -92,6 +91,27 @@ public class Controlador {
 		adaptadorUsuario.modificarUsuario(usuarioActual);
 		adaptadorUsuario.modificarUsuario(receptor);
 		return mensaje;
+	}
+	
+	public boolean enviarMensaje(int tlf, String texto) {
+		Optional<Usuario> optionalUsuario = repositorioUsuarios.getUsuario(tlf);
+		if(optionalUsuario.isPresent()) {
+			Usuario receptor = optionalUsuario.get();
+			Mensaje mensaje = usuarioActual.enviarMensaje(receptor, texto);
+			adaptadorMensaje.registrarMensaje(mensaje);
+			adaptadorUsuario.modificarUsuario(usuarioActual);
+			adaptadorUsuario.modificarUsuario(receptor);
+			return true;
+		}
+		return false;
+	}
+	
+	public void enviarMensaje(Contacto contacto, String texto) {
+		if(contacto instanceof ContactoIndividual) {
+			this.enviarMensaje(usuarioActual, ((ContactoIndividual) contacto).getUsuario() , texto);
+		} else if(contacto instanceof GrupoDeContactos) {
+			((GrupoDeContactos) contacto).getContactos().stream().forEach(c -> this.enviarMensaje(usuarioActual, c.getUsuario(), texto));
+		}
 	}
 	
 	public List<Mensaje> getUltimosMensajes() {

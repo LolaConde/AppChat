@@ -206,7 +206,7 @@ public class VentanaPrincipal extends JFrame {
 		// Lista de contactos
 		JComboBox comboBox = new JComboBox();
 		comboBox.setMaximumSize(new Dimension(500, 5120));
-		comboBox.setBackground(new Color(247, 210, 249));
+		comboBox.setBackground(FuncionesVentanas.COLOR_ROSA);
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {"contacto 1", "contacto 2", "contacto 3"}));
 		botonera.add(comboBox);
 		
@@ -220,7 +220,13 @@ public class VentanaPrincipal extends JFrame {
 		// Botón de enviar mensaje
 		JButton botonEnviar = new JButton("");
 		botonEnviar.setIcon(ICONO_ENVIAR_MENSAJE);
-		botonEnviar.setBackground(new Color(247, 210, 249));
+		botonEnviar.setBackground(FuncionesVentanas.COLOR_ROSA);
+		botonEnviar.addActionListener(ev -> {
+			VentanaEnviarMensaje nuevaVentana = new VentanaEnviarMensaje();
+	        nuevaVentana.setVisible(true);
+	        nuevaVentana.setLocationRelativeTo(this);
+			this.dispose();
+		});
 		botonera.add(botonEnviar);
 		
 		// Horizontal Strut
@@ -231,7 +237,7 @@ public class VentanaPrincipal extends JFrame {
 		// Botón de buscar mensajes
 		JButton botonBuscar = new JButton("");
 		botonBuscar.setIcon(ICONO_BUSCAR_MENSAJES);
-		botonBuscar.setBackground(new Color(247, 210, 249));
+		botonBuscar.setBackground(FuncionesVentanas.COLOR_ROSA);
 		botonera.add(botonBuscar);
 		
 		// Horizontal Strut
@@ -242,7 +248,7 @@ public class VentanaPrincipal extends JFrame {
 		// Botón de agenda de contactos
 		JButton botonContactos = new JButton("");
 		botonContactos.setIcon(ICONO_AGENDA_CONTACTOS);
-		botonContactos.setBackground(new Color(247, 210, 249));
+		botonContactos.setBackground(FuncionesVentanas.COLOR_ROSA);
 		botonContactos.addActionListener(ev -> {
 			VentanaContactos nuevaVentana = new VentanaContactos();
 	        nuevaVentana.setVisible(true);
@@ -257,7 +263,7 @@ public class VentanaPrincipal extends JFrame {
 		
 		// Botón de Premium
 		JButton botonPremium = new JButton("Premium");
-		botonPremium.setBackground(new Color(247, 210, 249));
+		botonPremium.setBackground(FuncionesVentanas.COLOR_ROSA);
 		botonera.add(botonPremium);
 		
 		// Horizontal Strut

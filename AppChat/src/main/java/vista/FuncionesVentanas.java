@@ -13,7 +13,9 @@ public class FuncionesVentanas {
 	private static final ImageIcon ICONO_APP = new ImageIcon(FuncionesVentanas.class.getResource("/vista/imagenes/icono-appchat.png"));
 	
 	public static final ImageIcon ICONO_USUARIO_SIN_FOTO = new ImageIcon(FuncionesVentanas.class.getResource("/vista/imagenes/usuario-sin-foto.png"));
-
+	
+	public static final Color COLOR_ROSA = new Color(247, 210, 249);
+	
 	public static void addManejadorFieldTelefono(JTextField telefonoField) {
 		// El teléfono solo puede contener números
 		telefonoField.addKeyListener(new KeyAdapter() {
@@ -29,6 +31,16 @@ public class FuncionesVentanas {
 	
 	public static void addIcon(JFrame frame) {
 		frame.setIconImage(ICONO_APP.getImage());
+	}
+	
+	/**
+	 * @param ventanaAntigua JFrame actualmente visible que se cerrará
+	 * @param ventanaNueva JFrame que se hará visible
+	 */
+	public static void irAVentana(JFrame ventanaAntigua, JFrame ventanaNueva) {
+		ventanaNueva.setVisible(true);
+		ventanaNueva.setLocationRelativeTo(ventanaAntigua);
+		ventanaAntigua.dispose();
 	}
 	
 	public static JLabel opcionMostrarPassword(final JPasswordField password) {

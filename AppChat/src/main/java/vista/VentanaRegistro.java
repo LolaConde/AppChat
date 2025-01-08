@@ -93,14 +93,14 @@ public class VentanaRegistro extends JFrame {
 		
 		// Botón guardar el registro
 		JButton aceptarButton = new JButton("Aceptar");
-		aceptarButton.setBackground(new Color(247, 210, 249));
+		aceptarButton.setBackground(FuncionesVentanas.COLOR_ROSA);
 		panelAceptarCancelar.add(aceptarButton);
 		addManejadorProcesarRegistro(aceptarButton);
 		
 		// Botón volver al login
 		JButton cancelarButton = new JButton("Cancelar");
 		addManejadorIrAlLogin(cancelarButton);
-		cancelarButton.setBackground(new Color(247, 210, 249));
+		cancelarButton.setBackground(FuncionesVentanas.COLOR_ROSA);
 		panelAceptarCancelar.add(cancelarButton);
 		
 		return panelAceptarCancelar;
