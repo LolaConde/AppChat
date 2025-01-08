@@ -137,6 +137,12 @@ public class VentanaContactos extends JFrame {
 		panelAddContactos.add(horizontalGlue);
 		
 		JButton btnAddGrupo = new JButton("Añadir Grupo");
+		btnAddGrupo.addActionListener(ev -> {
+			VentanaAddGrupo nuevaVentana = new VentanaAddGrupo();
+			nuevaVentana.setVisible(true);
+	        nuevaVentana.setLocationRelativeTo(this);
+			this.dispose();
+		});
 		btnAddGrupo.setBackground(new Color(247, 210, 249));
 		panelAddContactos.add(btnAddGrupo);
 		

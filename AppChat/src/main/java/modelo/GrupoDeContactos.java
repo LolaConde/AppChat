@@ -24,6 +24,6 @@ public class GrupoDeContactos extends Contacto{
 	}
 	
 	public String getImagen() {
-		return this.imagen;
+		return this.imagen == null? "" : this.imagen;
 	}
 }
