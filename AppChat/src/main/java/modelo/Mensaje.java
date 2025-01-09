@@ -53,6 +53,11 @@ public class Mensaje{
 	public Integer getNumeroDelReceptor() {
 		return receptor.getNumeroTelefono();
 	}
+	
+	/**
+	 * @param user
+	 * @return el usuario que participa en el mensaje (como emisor o receptor) que no es <code>user</code>
+	 */
 	public Usuario obtenerElOtroUsuario(Usuario user) {
 		return user.equals(emisor) ? receptor : emisor;
 	}
@@ -64,6 +69,10 @@ public class Mensaje{
 		return emisor.equals(user);
 	}
 	
+	/**
+	 * @param m
+	 * @return true si el emisor y el receptor de este mensaje participan también en <code>m</code>
+	 */
 	public boolean isMismaConversacion(Mensaje m) {
 		return (m.isEmisor(emisor) && m.isReceptor(receptor) || (m.isEmisor(receptor) && m.isReceptor(emisor)));
 	}

@@ -3,11 +3,9 @@ package modelo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -132,6 +130,13 @@ public class Usuario {
     	return contacto;
     }
     
+    /**
+     * Si tiene un contacto cuyo usuario es <code>usuario</code>, actualiza su nombre.
+     * 
+     * @param usuario
+     * @param nombre Nuevo nombre del contacto
+     * @return Optional con el contacto actualizado, o vacío si no está en sus contactos
+     */
     public Optional<ContactoIndividual> actualizarContactoIndividual(Usuario usuario, String nombre) {
     	// Si el contacto ya existía, se cambia su nombre
     	Optional<ContactoIndividual> contactoExistente = contactos.stream()
@@ -147,8 +152,8 @@ public class Usuario {
     	return Optional.empty();
     }
     
-    public GrupoDeContactos addGrupoDeContactos(List<ContactoIndividual> contactosDelGrupo, String nombre, String imagen) {
-    	GrupoDeContactos grupo = new GrupoDeContactos(contactosDelGrupo, nombre, imagen);
+    public GrupoDeContactos addGrupoDeContactos(List<ContactoIndividual> contactosDelGrupo, String nombreDelGrupo, String imagenDelGrupo) {
+    	GrupoDeContactos grupo = new GrupoDeContactos(contactosDelGrupo, nombreDelGrupo, imagenDelGrupo);
     	contactos.add(grupo);
     	return grupo;
     }
@@ -205,6 +210,9 @@ public class Usuario {
     	}
     }
     
+	/**
+	 * @return Lista ordenada por fecha con el último mensaje de cada chat del usuario
+	 */
     public List<Mensaje> getUltimosMensajes() {
     	Map<Usuario, List<Mensaje>> mensajesPorUsuario = Stream.of(mensajesEnviados, mensajesRecibidos)
     			.flatMap(listaMensajes -> listaMensajes.stream())
@@ -217,7 +225,10 @@ public class Usuario {
     		.collect(Collectors.toList());
     }
   
-    
+	/**
+	 * @param mensaje
+	 * @return Lista ordenada por fecha con los mensajes intercambiados con el otro participante de <code>mensaje</code>
+	 */
     public List<Mensaje> getOtrosMensajes(Mensaje mensaje){
     	return Stream.of(mensajesEnviados, mensajesRecibidos)
     			.flatMap(listaMensajes -> listaMensajes.stream())

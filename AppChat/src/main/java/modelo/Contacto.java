@@ -24,5 +24,8 @@ public abstract class Contacto {
     	this.nombre = nombre;
     }
     
+    /**
+     * @return la URL de la imagen del usuario si es un contacto individual, o la URL de la imagen del grupo si es un grupo de contactos
+     */
     public abstract String getImagen();
 }

@@ -23,6 +23,9 @@ public class GrupoDeContactos extends Contacto{
 		return this.contactos;
 	}
 	
+	/**
+	 * @return la URL de la imagen del grupo, o una cadena vacía si no tiene imagen.
+	 */
 	public String getImagen() {
 		return this.imagen == null? "" : this.imagen;
 	}

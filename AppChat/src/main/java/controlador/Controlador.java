@@ -3,16 +3,13 @@ package controlador;
 import java.awt.Image;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 
 import modelo.Contacto;
 import modelo.ContactoIndividual;
@@ -54,6 +51,10 @@ public class Controlador {
 		return unicaInstancia;
 	}
 	
+	/**
+	 * @param mensaje
+	 * @return El usuario que intercambió <code>mensaje</code> con el usuario actual
+	 */
 	public Usuario obtenerUsuario(Mensaje mensaje) {
 		return mensaje.obtenerElOtroUsuario(usuarioActual);
 	}
@@ -61,12 +62,6 @@ public class Controlador {
 	public void registrarUsuario(String nombreCompleto, String password, int numeroTelefono, String email, LocalDate fechaNacimiento,
 			String imagenPerfil, String saludo) {
 		Usuario usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, saludo);
-		adaptadorUsuario.registrarUsuario(usuario);
-		repositorioUsuarios.addUsuario(usuario);
-	}
-	
-	// TODO: Eliminar este método, es de prueba
-	public void registrarUsuario(Usuario usuario) {
 		adaptadorUsuario.registrarUsuario(usuario);
 		repositorioUsuarios.addUsuario(usuario);
 	}
@@ -86,12 +81,15 @@ public class Controlador {
 		return mensaje;
 	}
 	
+	/**
+	 * @return Lista con todos los contactos del usuario actual
+	 */
 	public List<Contacto> getContactos(){
 		return usuarioActual.getContactos();
 	}
 	
 	/**
-	 * @return Una lista con todos los mensajes que ha enviado o recibido el usuario actual
+	 * @return Lista con todos los mensajes que ha enviado o recibido el usuario actual
 	 */
 	public List<Mensaje> getTodosMensajes(){
 		return Stream.of(usuarioActual.getMensajesEnviados(), usuarioActual.getMensajesRecibidos()).flatMap(lista -> lista.stream()).collect(Collectors.toList());
@@ -126,17 +124,36 @@ public class Controlador {
 				.collect(Collectors.toList());
 	}
 	
+	/**
+	 * Añade un nuevo grupo de contactos a los contactos del usuario actual, y lo guarda en la base de datos
+	 * 
+	 * @param contactos Lista de contactos que conforman el grupo
+	 * @param nombre El nombre del grupo
+	 * @param foto URL de la foto del grupo (usar cadena vacía "" si no hay foto)
+	 */
 	public void addGrupo(List<ContactoIndividual> contactos, String nombre, String foto) {
 		GrupoDeContactos grupo = usuarioActual.addGrupoDeContactos(contactos, nombre, foto);
 		adaptadorContacto.registrarContacto(grupo);
 		adaptadorUsuario.modificarUsuario(usuarioActual);
 	}
 	
+	/**
+	 * Registra un nuevo mensaje enviado por el usuario actual al usuario con el que se intercambió el mensaje <code>m</code>, y lo guarda en la base de datos.
+	 * @param m
+	 * @param texto El texto del nuevo mensaje
+	 * @return El nuevo mensaje
+	 */
 	public Mensaje enviarMensaje(Mensaje m, String texto) {
 		Usuario receptor = m.obtenerElOtroUsuario(usuarioActual);
 		return enviarMensaje(usuarioActual, receptor, texto);
 	}
 	
+	/**
+	 * Registra un mensaje enviado por el usuario actual al usuario con teléfono <code>tlf</code>, y lo guarda en la base de datos
+	 * @param tlf
+	 * @param texto El texto del nuevo mensaje
+	 * @return true si se ha podido enviar el mensaje, false si el teléfono no pertenece a ningún usuario de la aplicación.
+	 */
 	public boolean enviarMensaje(int tlf, String texto) {
 		Optional<Usuario> optionalUsuario = repositorioUsuarios.getUsuario(tlf);
 		if(optionalUsuario.isPresent()) {
@@ -147,6 +164,12 @@ public class Controlador {
 		return false;
 	}
 	
+	/**
+	 * Registra un mensaje enviado por el usuario actual a su contacto <code>contacto</code>, o en el caso de ser un grupo, envía uno a cada contacto individual de este. Los registra en la base de datos.
+	 * 
+	 * @param contacto
+	 * @param texto Texto del nuevo mensaje
+	 */
 	public void enviarMensaje(Contacto contacto, String texto) {
 		if(contacto instanceof ContactoIndividual) {
 			this.enviarMensaje(usuarioActual, ((ContactoIndividual) contacto).getUsuario() , texto);
@@ -155,21 +178,43 @@ public class Controlador {
 		}
 	}
 	
+	/**
+	 * @return Lista ordenada por fecha con el último mensaje de cada chat del usuario actual
+	 */
 	public List<Mensaje> getUltimosMensajes() {
 		return usuarioActual.getUltimosMensajes();
 	}
 	
+	/**
+	 * @return URL de la imagen de perfil del usuario actual
+	 */
 	public String getImagenDePerfil() {
 		return usuarioActual.getImagenPerfil();
 	}
 	
+	/**
+	 * @param usuario
+	 * @return Optional vacío si el usuario actual no tiene agregado a <code>usuario</code>, o Optional que contiene el nombre de contacto si lo tiene agregado
+	 */
 	public Optional<String> getNombreDeContacto(Usuario usuario) {
 		return usuarioActual.getNombreContacto(usuario);
 	}
 	
+	/**
+	 * Obtiene los mensajes intercambiados entre el usuario actual y el otro participante de <code>m</code>.
+	 * 
+	 * @param m 
+	 * @return Lista ordenada por fecha con los mensajes de la misma conversación que <code>m</code>
+	 */
 	public List<Mensaje> getOtrosMensajes(Mensaje m){
 		return usuarioActual.getOtrosMensajes(m);
 	}
+	
+	/**
+	 * @param telefono
+	 * @param password
+	 * @return true si el login es exitoso, false en caso contrario
+	 */
 	
 	public boolean login(int telefono, String password) {
 		Optional<Usuario> optionalUsuario = repositorioUsuarios.getUsuario(telefono);
@@ -183,10 +228,21 @@ public class Controlador {
 		return false;
 	}
 	
+	/**
+	 * @param mensaje
+	 * @return true si el usuario actual es el emisor de <code>mensaje</code>. false en caso contrario.
+	 */
 	public boolean isUsuarioActualEmisor(Mensaje mensaje) {
 		return mensaje.isEmisor(usuarioActual); 
 	}
 	
+	/**
+	 * Registra o actualiza el contacto del usuario actual con el número <code>telefono</code> y lo guarda en la base de datos.
+	 * 
+	 * @param telefono
+	 * @param nombre Nombre del contacto
+	 * @return true si el teléfono pertenece a un usuario de la aplicación. false en caso contrario.
+	 */
 	public boolean addContactoIndividual(int telefono, String nombre){
 		Optional<Usuario> optionalUsuario = repositorioUsuarios.getUsuario(telefono);
 		if(optionalUsuario.isPresent()) {
@@ -197,6 +253,12 @@ public class Controlador {
 		return false;
 	}
 	
+	/**
+	 * Registra o actualiza el contacto del usuario actual que hace referencia a <code>usuario</code>, y lo guarda en la base de datos
+	 * 
+	 * @param usuario
+	 * @param nombre Nombre del contacto
+	 */
 	public void addContactoIndividual(Usuario usuario, String nombre){
 		Optional<ContactoIndividual> contactoOptional = usuarioActual.actualizarContactoIndividual(usuario, nombre);
 		if(contactoOptional.isPresent()) {
@@ -210,6 +272,12 @@ public class Controlador {
 		adaptadorUsuario.modificarUsuario(usuarioActual);
 	}
 	
+	/**
+	 * Modifica la imagen de perfil del usuario actual y lo refleja en la base de datos.
+	 * 
+	 * @param url URL de la nueva imagen
+	 * @return true si la URL <code>url</code> es válida y se ha modificado, false en caso contrario.
+	 */
 	public boolean cambiarImagenDePerfil(String url) {
 		try {
 			URL imageUrl = new URL(url);
@@ -248,6 +316,7 @@ public class Controlador {
 				return Optional.of(numero);
 			}
 		}
+		// El texto no se refiere a ningún emoticono
 		return Optional.empty();
 	}
 	

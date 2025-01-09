@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import modelo.Contacto;
-import modelo.ContactoIndividual;
 import modelo.Mensaje;
 import modelo.Usuario;
 
