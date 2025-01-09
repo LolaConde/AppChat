@@ -152,6 +152,13 @@ public class Usuario {
     	return mensaje;
     }
     
+    public Mensaje enviarMensaje(Usuario usuario, int emoticono) {
+    	Mensaje mensaje = new Mensaje(this, usuario, emoticono, LocalDateTime.now());
+    	this.mensajesEnviados.add(mensaje);
+    	usuario.recibirMensaje(mensaje);
+    	return mensaje;
+    }
+    
     public List<Mensaje> getMensajesEnviados() {
 		return mensajesEnviados;
 	}

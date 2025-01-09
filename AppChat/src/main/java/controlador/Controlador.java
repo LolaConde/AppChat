@@ -23,6 +23,7 @@ import persistencia.FactoriaDAO;
 import persistencia.IAdaptadorContactoDAO;
 import persistencia.IAdaptadorMensajeDAO;
 import persistencia.IAdaptadorUsuarioDAO;
+import tds.BubbleText;
 
 public class Controlador {
 	private static Controlador unicaInstancia;
@@ -67,11 +68,19 @@ public class Controlador {
 		repositorioUsuarios.addUsuario(usuario);
 	}
 	
-	private void enviarMensaje(Usuario emisor, Usuario receptor, String texto) {
-		Mensaje mensaje = emisor.enviarMensaje(receptor, texto);
+	private Mensaje enviarMensaje(Usuario emisor, Usuario receptor, String texto) {
+		Optional<Integer> emoticonoOptional = getEmoticono(texto);
+		Mensaje mensaje;
+		if(emoticonoOptional.isPresent()) {
+			mensaje = emisor.enviarMensaje(receptor, emoticonoOptional.get());
+		}
+		else {
+			mensaje = emisor.enviarMensaje(receptor, texto);
+		}
 		adaptadorMensaje.registrarMensaje(mensaje);
 		adaptadorUsuario.modificarUsuario(emisor);
 		adaptadorUsuario.modificarUsuario(receptor);
+		return mensaje;
 	}
 	
 	public List<Contacto> getContactos(){
@@ -86,21 +95,14 @@ public class Controlador {
 	
 	public Mensaje enviarMensaje(Mensaje m, String texto) {
 		Usuario receptor = m.obtenerElOtroUsuario(usuarioActual);
-		Mensaje mensaje = usuarioActual.enviarMensaje(receptor, texto);
-		adaptadorMensaje.registrarMensaje(mensaje);
-		adaptadorUsuario.modificarUsuario(usuarioActual);
-		adaptadorUsuario.modificarUsuario(receptor);
-		return mensaje;
+		return enviarMensaje(usuarioActual, receptor, texto);
 	}
 	
 	public boolean enviarMensaje(int tlf, String texto) {
 		Optional<Usuario> optionalUsuario = repositorioUsuarios.getUsuario(tlf);
 		if(optionalUsuario.isPresent()) {
 			Usuario receptor = optionalUsuario.get();
-			Mensaje mensaje = usuarioActual.enviarMensaje(receptor, texto);
-			adaptadorMensaje.registrarMensaje(mensaje);
-			adaptadorUsuario.modificarUsuario(usuarioActual);
-			adaptadorUsuario.modificarUsuario(receptor);
+			enviarMensaje(usuarioActual, receptor, texto);
 			return true;
 		}
 		return false;
@@ -199,5 +201,15 @@ public class Controlador {
 		repositorioUsuarios = RepositorioUsuarios.getUnicaInstancia();
 	}
 	
+	private Optional<Integer> getEmoticono(String texto) {
+		if(texto.matches("^:[0-9]+$")) {
+			String numeroString = texto.substring(1);
+			int numero = Integer.valueOf(numeroString);
+			if (numero >= 0 && numero <= BubbleText.MAXICONO) {
+				return Optional.of(numero);
+			}
+		}
+		return Optional.empty();
+	}
 	
 }

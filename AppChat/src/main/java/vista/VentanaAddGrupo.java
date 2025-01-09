@@ -74,7 +74,7 @@ public class VentanaAddGrupo extends JFrame {
 		panelAceptarCancelar.add(horizontalGlue);
 		
 		JButton btnCrearGrupo = new JButton("Crear grupo");
-		btnCrearGrupo.setBackground(new Color(247, 210, 249));
+		btnCrearGrupo.setBackground(FuncionesVentanas.COLOR_ROSA);
 		btnCrearGrupo.addActionListener(ev -> {
 			// Nombre
 			String nombreDeGrupo = fieldNombreDelGrupo.getText();
@@ -118,7 +118,7 @@ public class VentanaAddGrupo extends JFrame {
 		panelAceptarCancelar.add(horizontalGlue_1);
 		
 		JButton btnCancelar = new JButton("Cancelar");
-		btnCancelar.setBackground(new Color(247, 210, 249));
+		btnCancelar.setBackground(FuncionesVentanas.COLOR_ROSA);
 		btnCancelar.addActionListener(ev -> {
 			VentanaContactos nuevaVentana = new VentanaContactos();
 			nuevaVentana.setVisible(true);
