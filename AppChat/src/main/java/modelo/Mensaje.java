@@ -67,6 +67,30 @@ public class Mensaje{
 	public boolean isMismaConversacion(Mensaje m) {
 		return (m.isEmisor(emisor) && m.isReceptor(receptor) || (m.isEmisor(receptor) && m.isReceptor(emisor)));
 	}
+	
+	/**
+	 * @param texto
+	 * @return true si el mensaje contiene la subcadena <code>texto</code>. false en caso contrario.
+	 */
+	public boolean containsText(String texto) {
+		return this.texto == null ? false : this.texto.contains(texto);
+	}
+	
+	/**
+	 * @param numeros
+	 * @return true si el número del emisor contiene la subcadena <code>numeros</code>. false en caso contrario
+	 */
+	public boolean tlfEmisorContiene(String numeros) {
+		return emisor.numeroContiene(numeros);
+	}
+	
+	/**
+	 * @param numeros
+	 * @return true si el número del receptor contiene la subcadena <code>numeros</code>. false en caso contrario
+	 */
+	public boolean tlfReceptorContiene(String numeros) {
+		return receptor.numeroContiene(numeros);
+	}
 
 	// Constructor: Mensaje de texto
 	public Mensaje(Usuario emisor, Usuario receptor, String texto, LocalDateTime fechaYHora) {

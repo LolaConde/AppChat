@@ -238,6 +238,7 @@ public class VentanaPrincipal extends JFrame {
 		JButton botonBuscar = new JButton("");
 		botonBuscar.setIcon(ICONO_BUSCAR_MENSAJES);
 		botonBuscar.setBackground(FuncionesVentanas.COLOR_ROSA);
+		botonBuscar.addActionListener(ev -> {FuncionesVentanas.irAVentana(this, new VentanaBuscarMensajes());});
 		botonera.add(botonBuscar);
 		
 		// Horizontal Strut

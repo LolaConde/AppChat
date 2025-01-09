@@ -118,6 +118,14 @@ public class Usuario {
     	return this.saludo;
     }
     
+    /**
+     * @param numeros
+     * @return true si su número de teléfono contiene la subcadena <code>numeros</code>. false en caso contrario.
+     */
+    public boolean numeroContiene(String numeros) {
+    	return Integer.toString(this.numeroTelefono).contains(numeros);
+    }
+    
     public ContactoIndividual addContactoIndividual(Usuario usuario, String nombre) {
     	ContactoIndividual contacto = new ContactoIndividual(usuario, nombre);
     	contactos.add(contacto);

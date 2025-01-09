@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -85,6 +88,42 @@ public class Controlador {
 	
 	public List<Contacto> getContactos(){
 		return usuarioActual.getContactos();
+	}
+	
+	/**
+	 * @return Una lista con todos los mensajes que ha enviado o recibido el usuario actual
+	 */
+	public List<Mensaje> getTodosMensajes(){
+		return Stream.of(usuarioActual.getMensajesEnviados(), usuarioActual.getMensajesRecibidos()).flatMap(lista -> lista.stream()).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Nota: Los emojis se indican en <code>texto</code>, con dos puntos seguidos del número del emoticono
+	 * 
+	 * @param nombreContacto Si no está vacío, sólo devuelve mensajes enviados con un contacto del usuario actual, cuyo nombre contenga la subcadena <code>nombreContacto</code>
+	 * @param texto Si no está vacío, sólo devuelve mensajes que contengan la subcadena <code>texto</code>, o se refieran al emoji indicado
+	 * @param numeros Si no está vacío, sólo devuelve mensajes que el usuario actual ha intercambiado con un usuario cuyo teléfono contenga la subcadena <code>numeros</code>
+	 * @return Lista con los mensajes que ha enviado o recibido el usuario actual, y cumplen los filtros
+	 */
+	public List<Mensaje> getMensajesFiltrados(String nombreContacto, String texto, String numeros){
+		// ¿"m" tiene el emoji indicado en "texto"?
+		Predicate<Mensaje> isEmoji = (m -> {
+			Optional<Integer> optionalEmoji = getEmoticono(texto);
+			if(optionalEmoji.isPresent() && optionalEmoji.get().equals(m.getEmoticono().orElse(Integer.valueOf(BubbleText.MAXICONO+1))))
+				return true;
+			return false;
+		});
+		// ¿"m" es enviado/recibido por un contacto del usuario actual cuyo nombre contiene "nombreContacto"?
+		Predicate<Mensaje> otroEsContactoConNombre = (m -> {
+			Optional<String> optionalNombreContacto = usuarioActual.getNombreContacto(m.obtenerElOtroUsuario(usuarioActual));
+			return optionalNombreContacto.isPresent() && optionalNombreContacto.get().contains(nombreContacto);
+		});
+		
+		return getTodosMensajes().stream()
+				.filter(m -> (texto.isEmpty() || m.containsText(texto) || isEmoji.test(m)))
+				.filter(m -> (numeros.isEmpty() || (m.isEmisor(usuarioActual) && m.tlfReceptorContiene(numeros)) || (m.isReceptor(usuarioActual) && m.tlfEmisorContiene(numeros))))
+				.filter(m -> nombreContacto.isEmpty() || otroEsContactoConNombre.test(m))
+				.collect(Collectors.toList());
 	}
 	
 	public void addGrupo(List<ContactoIndividual> contactos, String nombre, String foto) {

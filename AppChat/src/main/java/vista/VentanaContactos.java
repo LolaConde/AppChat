@@ -150,6 +150,9 @@ public class VentanaContactos extends JFrame {
 		panelAddContactos.add(horizontalGlue_1);
 		
 		JButton btnIrAVentanaPrincipal = new JButton("Volver a la ventana principal");
+		btnIrAVentanaPrincipal.addActionListener(ev -> {
+			FuncionesVentanas.irAVentana(this, new VentanaPrincipal());
+		});
 		btnIrAVentanaPrincipal.setBackground(FuncionesVentanas.COLOR_ROSA);
 		panelAddContactos.add(btnIrAVentanaPrincipal);
 		
