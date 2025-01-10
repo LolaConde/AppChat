@@ -1,11 +1,9 @@
 package vista;
 
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.AttributeSet.ColorAttribute;
 
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
@@ -21,14 +19,8 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
@@ -37,7 +29,6 @@ import com.toedter.calendar.JDateChooser;
 
 import controlador.Controlador;
 
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -139,7 +130,7 @@ public class VentanaRegistro extends JFrame {
 		gbl_panelDatos.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 2.0, Double.MIN_VALUE};
 		panelDatos.setLayout(gbl_panelDatos);
 		
-		// Campo nombre: Texto
+		// Nombre
 		txtNombre = new JLabel("Nombre:");
 		GridBagConstraints gbc_txtNombre = new GridBagConstraints();
 		gbc_txtNombre.anchor = GridBagConstraints.EAST;
@@ -148,7 +139,6 @@ public class VentanaRegistro extends JFrame {
 		gbc_txtNombre.gridy = 1;
 		panelDatos.add(txtNombre, gbc_txtNombre);
 		
-		// Campo nombre: field
 		nombreTxtField = new JTextField();
 		GridBagConstraints gbc_nombreTxtField = new GridBagConstraints();
 		gbc_nombreTxtField.fill = GridBagConstraints.HORIZONTAL;
@@ -159,7 +149,7 @@ public class VentanaRegistro extends JFrame {
 		panelDatos.add(nombreTxtField, gbc_nombreTxtField);
 		nombreTxtField.setColumns(10);
 		
-		// Campo apellidos: Texto
+		// Apellidos
 		txtApellidos = new JLabel("Apellidos:");
 		GridBagConstraints gbc_txtApellidos = new GridBagConstraints();
 		gbc_txtApellidos.anchor = GridBagConstraints.EAST;
@@ -168,7 +158,6 @@ public class VentanaRegistro extends JFrame {
 		gbc_txtApellidos.gridy = 3;
 		panelDatos.add(txtApellidos, gbc_txtApellidos);
 		
-		// Campo apellidos: field
 		apellidosTxtField = new JTextField();
 		GridBagConstraints gbc_apellidosTxtField = new GridBagConstraints();
 		gbc_apellidosTxtField.fill = GridBagConstraints.HORIZONTAL;
@@ -179,7 +168,7 @@ public class VentanaRegistro extends JFrame {
 		panelDatos.add(apellidosTxtField, gbc_apellidosTxtField);
 		apellidosTxtField.setColumns(10);
 		
-		// Campo teléfono: Texto
+		// Teléfono
 		txtTelefono = new JLabel("Teléfono:");
 		GridBagConstraints gbc_txtTelefono = new GridBagConstraints();
 		gbc_txtTelefono.anchor = GridBagConstraints.EAST;
@@ -188,7 +177,6 @@ public class VentanaRegistro extends JFrame {
 		gbc_txtTelefono.gridy = 5;
 		panelDatos.add(txtTelefono, gbc_txtTelefono);
 		
-		// Campo teléfono: field
 		TelefonoTxtField = new JTextField();
 		FuncionesVentanas.addManejadorFieldTelefono(TelefonoTxtField);
 		GridBagConstraints gbc_TelefonoTxtField = new GridBagConstraints();
@@ -199,7 +187,7 @@ public class VentanaRegistro extends JFrame {
 		panelDatos.add(TelefonoTxtField, gbc_TelefonoTxtField);
 		TelefonoTxtField.setColumns(10);
 		
-		// Campo fecha de nacimiento: Texto
+		// Fecha de nacimiento
 		txtFechaNacimiento = new JLabel("Fecha de nacimiento:");
 		GridBagConstraints gbc_txtFechaNacimiento = new GridBagConstraints();
 		gbc_txtFechaNacimiento.anchor = GridBagConstraints.EAST;
@@ -208,7 +196,6 @@ public class VentanaRegistro extends JFrame {
 		gbc_txtFechaNacimiento.gridy = 5;
 		panelDatos.add(txtFechaNacimiento, gbc_txtFechaNacimiento);
 		
-		// Campo fecha de nacimiento: date chooser
 		FechaNacimientoDateChooser = new JDateChooser();
 		GridBagConstraints gbc_FechaNacimientoDateChooser = new GridBagConstraints();
 		gbc_FechaNacimientoDateChooser.insets = new Insets(0, 0, 5, 5);
@@ -217,7 +204,7 @@ public class VentanaRegistro extends JFrame {
 		gbc_FechaNacimientoDateChooser.gridy = 5;
 		panelDatos.add(FechaNacimientoDateChooser, gbc_FechaNacimientoDateChooser);
 		
-		// Campo contraseña (1º): Texto
+		// Contraseña 1
 		txtPass1 = new JLabel("Contraseña:");
 		GridBagConstraints gbc_txtPass1 = new GridBagConstraints();
 		gbc_txtPass1.anchor = GridBagConstraints.EAST;
@@ -226,7 +213,6 @@ public class VentanaRegistro extends JFrame {
 		gbc_txtPass1.gridy = 7;
 		panelDatos.add(txtPass1, gbc_txtPass1);
 		
-		// Campo contraseña (1º): field
 		passwordField1 = new JPasswordField();
 		GridBagConstraints gbc_passwordField1 = new GridBagConstraints();
 		gbc_passwordField1.fill = GridBagConstraints.HORIZONTAL;
@@ -235,7 +221,6 @@ public class VentanaRegistro extends JFrame {
 		gbc_passwordField1.gridy = 7;
 		panelDatos.add(passwordField1, gbc_passwordField1);
 		
-		// Campo contraseña (1º): JLabel para mostrarla/ocultarla
 		JLabel mostrarPassJLabel1 = FuncionesVentanas.opcionMostrarPassword(passwordField1);
 		GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
 		gbc_lblNewLabel_3.insets = new Insets(0, 0, 5, 5);
@@ -243,7 +228,7 @@ public class VentanaRegistro extends JFrame {
 		gbc_lblNewLabel_3.gridy = 7;
 		panelDatos.add(mostrarPassJLabel1, gbc_lblNewLabel_3);
 		
-		// Campo contraseña (2º): Texto
+		// Contraseña 2
 		txtPass2 = new JLabel("Repite la contraseña:");
 		GridBagConstraints gbc_txtPass2 = new GridBagConstraints();
 		gbc_txtPass2.anchor = GridBagConstraints.EAST;
@@ -252,7 +237,6 @@ public class VentanaRegistro extends JFrame {
 		gbc_txtPass2.gridy = 7;
 		panelDatos.add(txtPass2, gbc_txtPass2);
 		
-		// Campo contraseña (2º): field
 		passwordField2 = new JPasswordField();
 		GridBagConstraints gbc_passwordField2 = new GridBagConstraints();
 		gbc_passwordField2.insets = new Insets(0, 0, 5, 5);
@@ -261,7 +245,6 @@ public class VentanaRegistro extends JFrame {
 		gbc_passwordField2.gridy = 7;
 		panelDatos.add(passwordField2, gbc_passwordField2);
 		
-		// Campo contraseña (2º): JLabel para mostrarla/ocultarla
 		JLabel mostrarPassJLabel2 = FuncionesVentanas.opcionMostrarPassword(passwordField2);
 		GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints();
 		gbc_lblNewLabel_4.insets = new Insets(0, 0, 5, 5);
@@ -269,7 +252,7 @@ public class VentanaRegistro extends JFrame {
 		gbc_lblNewLabel_4.gridy = 7;
 		panelDatos.add(mostrarPassJLabel2, gbc_lblNewLabel_4);
 		
-		// Campo saludo: Texto
+		// Saludo
 		JLabel txtSaludo = new JLabel("Saludo:");
 		GridBagConstraints gbc_txtSaludo = new GridBagConstraints();
 		gbc_txtSaludo.anchor = GridBagConstraints.NORTHEAST;
@@ -278,7 +261,6 @@ public class VentanaRegistro extends JFrame {
 		gbc_txtSaludo.gridy = 9;
 		panelDatos.add(txtSaludo, gbc_txtSaludo);
 		
-		// Campo saludo: field
 		GridBagConstraints gbc_scrollPaneSaludo = new GridBagConstraints();
 		gbc_scrollPaneSaludo.gridheight = 2;
 		gbc_scrollPaneSaludo.insets = new Insets(0, 0, 5, 5);
@@ -287,7 +269,7 @@ public class VentanaRegistro extends JFrame {
 		gbc_scrollPaneSaludo.gridy = 9;
 		panelDatos.add(textAreaConScrollSaludo(), gbc_scrollPaneSaludo);
 		
-		// Campo imagen: Texto
+		// Url de imagen de perfil
 		txtImagen = new JLabel("Imagen:");
 		GridBagConstraints gbc_txtImagen = new GridBagConstraints();
 		gbc_txtImagen.anchor = GridBagConstraints.NORTHEAST;
@@ -296,7 +278,6 @@ public class VentanaRegistro extends JFrame {
 		gbc_txtImagen.gridy = 9;
 		panelDatos.add(txtImagen, gbc_txtImagen);
 		
-		// Campo imagen: field para la url
 		imagenTxtField = new JTextField();
 		GridBagConstraints gbc_imagenTxtField = new GridBagConstraints();
 		gbc_imagenTxtField.anchor = GridBagConstraints.NORTH;
@@ -307,7 +288,6 @@ public class VentanaRegistro extends JFrame {
 		panelDatos.add(imagenTxtField, gbc_imagenTxtField);
 		imagenTxtField.setColumns(10);
 		
-		// Campo imagen: Imagen mostrada de la url del field
 		imagenPerfil = new JLabel("");
 		imagenPerfil.setIcon(new ImageIcon(VentanaRegistro.class.getResource("/vista/imagenes/usuario.png")));
 		GridBagConstraints gbc_imagenPerfil = new GridBagConstraints();
@@ -320,11 +300,13 @@ public class VentanaRegistro extends JFrame {
 		return panelDatos;
 	}
 	
+	/**
+	 * @return JScrollPane con scroll vertical, que muestra <code>saludoField</code>
+	 */
 	private JScrollPane textAreaConScrollSaludo() {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		
-		// Text area
 		saludoField = new JTextArea();
 		saludoField.setLineWrap(true);
 		saludoField.setWrapStyleWord(true);
@@ -333,24 +315,25 @@ public class VentanaRegistro extends JFrame {
 		return scrollPane;
 	}
 	
+	/**
+	 * Resalta en rojo los JLabel correspondientes a campos incorrectos y muestra un JOptionPane con los errores detallados.
+	 * @return true si los datos son correctos y se puede proceder a registrar al usuario. false en caso contrario.
+	 */
 	private boolean comprobarDatosIntroducidos() {
 		limpiarDatos();
 		
 		boolean datosCorrectos = true;
 		String explicacionDeErrores = "";
-		// nombre no vacío
 		if (nombreTxtField.getText().trim().isEmpty()) {
 			txtNombre.setForeground(Color.RED);
 			datosCorrectos = false;
 			explicacionDeErrores += "El nombre no puede estar vacío" + '\n';
 		}
-		// apellidos no vacíos
 		if (apellidosTxtField.getText().trim().isEmpty()) {
 			txtApellidos.setForeground(Color.RED);
 			datosCorrectos = false;
 			explicacionDeErrores += "Los apellidos no pueden estar vacíos" + '\n';
 		}
-		// teléfono no vacío y sólo tiene números
 		if (TelefonoTxtField.getText().isEmpty()) {
 			txtTelefono.setForeground(Color.RED);
 			explicacionDeErrores += "El teléfono no puede estar vacío" + '\n';
@@ -361,21 +344,18 @@ public class VentanaRegistro extends JFrame {
 			explicacionDeErrores += "El teléfono solo puede tener números" + '\n';
 			datosCorrectos = false;
 		}
-		// Fecha de nacimiento anterior a hoy
 		Date hoy = new Date();
 		if(FechaNacimientoDateChooser.getDate() == null || FechaNacimientoDateChooser.getDate().after(hoy)) {
 			txtFechaNacimiento.setForeground(Color.RED);
 			datosCorrectos = false;
 			explicacionDeErrores += "La fecha de nacimiento debe contener una fecha anterior a hoy" + '\n';
 		}
-		// contraseñas iguales
 		if(!Arrays.equals(passwordField1.getPassword(), passwordField2.getPassword())) {
 			txtPass1.setForeground(Color.RED);
 			txtPass2.setForeground(Color.RED);
 			datosCorrectos = false;
 			explicacionDeErrores += "Los dos campos de contraseña deben contener el mismo valor" + '\n';
 		}
-		// contraseña no vacía
 		if(passwordField1.getPassword().length == 0) {
 			txtPass1.setForeground(Color.RED);
 			datosCorrectos = false;
@@ -386,7 +366,7 @@ public class VentanaRegistro extends JFrame {
 			datosCorrectos = false;
 			explicacionDeErrores += "El campo de la contraseña 2 está vacío: La contraseña no puede estar vacía" + '\n';
 		}
-		// url de la imagen hace referencia a una imagen existente
+		
 		URL url = null;
 		try {
 			url = new URL(imagenTxtField.getText());

@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Usuario {
-	// Datos
     private String nombreCompleto;
     private String password;
     private int numeroTelefono;
@@ -20,24 +19,19 @@ public class Usuario {
     private String saludo;
     private static final String SALUDO_POR_DEFECTO = "Hi there! I'm using AppChat";
     
-    // Mensajes
     private List<Mensaje> mensajesEnviados;
     private List<Mensaje> mensajesRecibidos;
     
-    // Contactos
     private List<Contacto> contactos;
     
-    // Premium
     private boolean isPremium;
     private Descuento descuento;
     
-    // Codigo
     private int codigo;
     
     // Constructor
     public Usuario(String nombreCompleto, String password, int numeroTelefono, String email, LocalDate fechaNacimiento,
 			String imagenPerfil, String saludo) {
-    	//Datos
 		this.nombreCompleto = nombreCompleto;
 		this.password = password;
 		this.numeroTelefono = numeroTelefono;
@@ -45,14 +39,11 @@ public class Usuario {
 		this.fechaNacimiento = fechaNacimiento;
 		this.imagenPerfil = imagenPerfil;
 		this.saludo = saludo;
-		// Mensajes y contactos
 		this.mensajesEnviados = new ArrayList<Mensaje>();
 		this.mensajesRecibidos = new ArrayList<Mensaje>();
 		this.contactos = new ArrayList<Contacto>();
-		//Premium
 		this.isPremium = false;
 		this.descuento = null;
-		// Codigo
 		this.codigo = 0;
 	}
     

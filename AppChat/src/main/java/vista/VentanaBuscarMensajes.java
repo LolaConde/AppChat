@@ -1,7 +1,5 @@
 package vista;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -22,8 +20,6 @@ import javax.swing.JButton;
 import java.awt.Component;
 import javax.swing.Box;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class VentanaBuscarMensajes extends JFrame {
 
@@ -31,23 +27,8 @@ public class VentanaBuscarMensajes extends JFrame {
 	private JTextField fieldTexto;
 	private JTextField fieldTelefono;
 	private JTextField fieldContacto;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaBuscarMensajes frame = new VentanaBuscarMensajes();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
+	private DefaultListModel<Mensaje> modelo;
+	
 	/**
 	 * Create the frame.
 	 */
@@ -58,17 +39,55 @@ public class VentanaBuscarMensajes extends JFrame {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
+		// Panel con filtros
+		contentPane.add(panelBusqueda(), BorderLayout.NORTH);
+		// Panel con mensajes filtrados
+		contentPane.add(listaDeMensajesConScroll(), BorderLayout.CENTER);
+		
+		// Botón de cancelar
+		JButton btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(ev -> {
+				FuncionesVentanas.irAVentana(this, new VentanaPrincipal());
+		});
+		btnCancelar.setBackground(new Color(192, 192, 192));
+		contentPane.add(btnCancelar, BorderLayout.SOUTH);
+
+	}
+	
+	/**
+	 * @return JScrollPane con una lista de mensajes filtrados según <code>modelo</code>
+	 */
+	private JScrollPane listaDeMensajesConScroll() {
+		JScrollPane scrollPane = new JScrollPane();
+		
+		// Crear un modelo de lista y agregar elementos
+		modelo = new DefaultListModel<Mensaje>();
+        Controlador.getUnicaInstancia().getTodosMensajes().stream().forEachOrdered(modelo::addElement);
+        
+        // Crear el JList basado en el modelo
+        JList<Mensaje> listaMensajes = new JList<>(modelo);
+        listaMensajes.setBackground(new Color(238, 238, 238));
+        listaMensajes.setCellRenderer(new MensajeCellRenderer2());
+		scrollPane.setViewportView(listaMensajes);
+		
+		return scrollPane;
+	}
+	
+	/**
+	 * @return Panel con campos para filtrar mensajes, y un botón que los filtra actualizando <code>modelo</code>.
+	 */
+	
+	private JPanel panelBusqueda() {
 		JPanel panelBusqueda = new JPanel();
-		contentPane.add(panelBusqueda, BorderLayout.NORTH);
 		panelBusqueda.setLayout(new BoxLayout(panelBusqueda, BoxLayout.Y_AXIS));
 		
 		Component verticalStrut_1 = Box.createVerticalStrut(20);
 		panelBusqueda.add(verticalStrut_1);
 		
+		// Filtro texto
 		JPanel panelTexto = new JPanel();
 		panelBusqueda.add(panelTexto);
 		panelTexto.setLayout(new BoxLayout(panelTexto, BoxLayout.X_AXIS));
@@ -80,14 +99,17 @@ public class VentanaBuscarMensajes extends JFrame {
 		panelTexto.add(fieldTexto);
 		fieldTexto.setToolTipText("");
 		
+		// 
 		Component verticalStrut = Box.createVerticalStrut(20);
 		verticalStrut.setPreferredSize(new Dimension(0, 10));
 		panelBusqueda.add(verticalStrut);
 		
+		//
 		JPanel panelTlfContacto = new JPanel();
 		panelBusqueda.add(panelTlfContacto);
 		panelTlfContacto.setLayout(new BoxLayout(panelTlfContacto, BoxLayout.X_AXIS));
 		
+		// Filtro teléfono
 		JLabel lblTelefono = new JLabel("Teléfono: ");
 		panelTlfContacto.add(lblTelefono);
 		
@@ -95,40 +117,23 @@ public class VentanaBuscarMensajes extends JFrame {
 		FuncionesVentanas.addManejadorFieldTelefono(fieldTelefono);
 		panelTlfContacto.add(fieldTelefono);
 		
+		// 
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		panelTlfContacto.add(horizontalStrut);
 		
+		// Filtro nombre del contacto
 		JLabel lblContacto = new JLabel("Contacto: ");
 		panelTlfContacto.add(lblContacto);
 		
 		fieldContacto = new JTextField();
 		panelTlfContacto.add(fieldContacto);
 		
+		// 
 		Component verticalStrut_2 = Box.createVerticalStrut(20);
 		verticalStrut_2.setPreferredSize(new Dimension(0, 10));
 		panelBusqueda.add(verticalStrut_2);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		contentPane.add(scrollPane, BorderLayout.CENTER);
-		
-		
-		// Crear un modelo de lista y agregar elementos
-		DefaultListModel<Mensaje> modelo = new DefaultListModel<Mensaje>();
-        Controlador.getUnicaInstancia().getTodosMensajes().stream().forEachOrdered(modelo::addElement);
-        
-        // Crear el JList basado en el modelo
-        JList<Mensaje> listaMensajes = new JList<>(modelo);
-        listaMensajes.setBackground(new Color(238, 238, 238));
-        listaMensajes.setCellRenderer(new MensajeCellRenderer2());
-		scrollPane.setViewportView(listaMensajes);
-		
-		JButton btnCancelar = new JButton("Cancelar");
-		btnCancelar.addActionListener(ev -> {
-				FuncionesVentanas.irAVentana(this, new VentanaPrincipal());
-		});
-		btnCancelar.setBackground(new Color(192, 192, 192));
-		contentPane.add(btnCancelar, BorderLayout.SOUTH);
-		
+		// Botón buscar mensajes
 		JButton btnBuscar = new JButton("Buscar");
 		btnBuscar.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnBuscar.setBackground(FuncionesVentanas.COLOR_ROSA);
@@ -137,6 +142,8 @@ public class VentanaBuscarMensajes extends JFrame {
 			Controlador.getUnicaInstancia().getMensajesFiltrados(fieldContacto.getText(), fieldTexto.getText(), fieldTelefono.getText()).forEach(modelo::addElement);
 		});
 		panelBusqueda.add(btnBuscar);
+		
+		return panelBusqueda;
 	}
 
 }

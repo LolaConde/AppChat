@@ -16,6 +16,10 @@ public class FuncionesVentanas {
 	
 	public static final Color COLOR_ROSA = new Color(247, 210, 249);
 	
+	/**
+	 * Añade un KeyListener a <code>telefonoField</code> para permitir únicamente números. Cualquier otro carácter será ignorado.
+	 * @param telefonoField
+	 */
 	public static void addManejadorFieldTelefono(JTextField telefonoField) {
 		// El teléfono solo puede contener números
 		telefonoField.addKeyListener(new KeyAdapter() {
@@ -29,6 +33,10 @@ public class FuncionesVentanas {
 		});
 	}
 	
+	/**
+	 * Añade el icono de la aplicación a <code>frame</code>.
+	 * @param frame
+	 */
 	public static void addIcon(JFrame frame) {
 		frame.setIconImage(ICONO_APP.getImage());
 	}
@@ -43,6 +51,12 @@ public class FuncionesVentanas {
 		ventanaAntigua.dispose();
 	}
 	
+	/**
+	 * Crea un JLabel que alterna la visibilidad de la contraseña en <code>password</code> al hacer clic.
+	 * El cursor cambia a HAND_CURSOR cuando pasa sobre el JLabel creado.
+	 * @param password
+	 * @return El JLabel creado
+	 */
 	public static JLabel opcionMostrarPassword(final JPasswordField password) {
 		
 		// Se define el caracter de ocultación de la contraseña si esta está oculta

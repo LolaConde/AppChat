@@ -1,6 +1,5 @@
 package vista;
 
-import java.awt.EventQueue;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.List;
@@ -37,22 +36,6 @@ public class VentanaAddGrupo extends JFrame {
 	private JList<ContactoIndividual> listaContactos;
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaAddGrupo frame = new VentanaAddGrupo();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Create the frame.
 	 */
 	public VentanaAddGrupo() {
@@ -62,20 +45,108 @@ public class VentanaAddGrupo extends JFrame {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
+		contentPane.add(panelAceptarCancelar(), BorderLayout.SOUTH);
+		contentPane.add(panelNombreYFoto(), BorderLayout.NORTH);
+		contentPane.add(panelIndicaContactos(), BorderLayout.CENTER);
+	}
+	
+	/**
+	 * @return Panel con scroll en el que seleccionar los contactos del grupo a crear
+	 */
+	private JScrollPane panelIndicaContactos() {
+		JScrollPane scrollPaneContactos = new JScrollPane();
+		
+		// Modelo de lista con los contactos individuales del usuario actual
+		DefaultListModel<ContactoIndividual> modelo = new DefaultListModel<>();
+		Controlador.getUnicaInstancia().getContactos().stream()
+			.filter(c -> c instanceof ContactoIndividual)
+			.map(c -> (ContactoIndividual) c)
+			.forEach(modelo::addElement);
+		
+		// Lista basada en el modelo
+		listaContactos = new JList<ContactoIndividual>(modelo);
+		listaContactos.setBackground(new Color(238, 238, 238));
+        listaContactos.setCellRenderer(new ContactoCellRenderer());
+        listaContactos.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		
+		scrollPaneContactos.setViewportView(listaContactos);
+		
+		return scrollPaneContactos;
+	}
+	
+	/**
+	 * @return Panel en el que indicar el nombre y foto del grupo a crear
+	 */
+	private JPanel panelNombreYFoto() {
+		JPanel panelNombreYFoto = new JPanel();
+		panelNombreYFoto.setLayout(new BoxLayout(panelNombreYFoto, BoxLayout.Y_AXIS));
+		
+		// Introduce el nombre
+		JPanel panelNombre = new JPanel();
+		panelNombreYFoto.add(panelNombre);
+		panelNombre.setLayout(new BoxLayout(panelNombre, BoxLayout.X_AXIS));
+		
+		JLabel lblNombre = new JLabel("Introduce el nombre:");
+		panelNombre.add(lblNombre);
+		
+		fieldNombreDelGrupo = new JTextField();
+		panelNombre.add(fieldNombreDelGrupo);
+		fieldNombreDelGrupo.setColumns(10);
+		
+		// Introduce la url de la imagen
+		JPanel panelFoto = new JPanel();
+		panelNombreYFoto.add(panelFoto);
+		panelFoto.setLayout(new BoxLayout(panelFoto, BoxLayout.X_AXIS));
+		
+		JLabel lblFoto = new JLabel("Introduce la URL a la imagen (opcional): ");
+		panelFoto.add(lblFoto);
+		
+		fieldFotoDelGrupo = new JTextField();
+		panelFoto.add(fieldFotoDelGrupo);
+		fieldFotoDelGrupo.setColumns(10);
+		
+		return panelNombreYFoto;
+	}
+	
+	private JPanel panelAceptarCancelar() {
 		JPanel panelAceptarCancelar = new JPanel();
-		contentPane.add(panelAceptarCancelar, BorderLayout.SOUTH);
 		panelAceptarCancelar.setLayout(new BoxLayout(panelAceptarCancelar, BoxLayout.X_AXIS));
 		
 		Component horizontalGlue = Box.createHorizontalGlue();
 		panelAceptarCancelar.add(horizontalGlue);
 		
+		// Botón crear grupo
 		JButton btnCrearGrupo = new JButton("Crear grupo");
 		btnCrearGrupo.setBackground(FuncionesVentanas.COLOR_ROSA);
-		btnCrearGrupo.addActionListener(ev -> {
+		addManejadorCrearGrupo(btnCrearGrupo);
+		panelAceptarCancelar.add(btnCrearGrupo);
+		
+		Component horizontalGlue_1 = Box.createHorizontalGlue();
+		panelAceptarCancelar.add(horizontalGlue_1);
+		
+		// Botón cancelar
+		JButton btnCancelar = new JButton("Cancelar");
+		btnCancelar.setBackground(FuncionesVentanas.COLOR_ROSA);
+		btnCancelar.addActionListener(ev -> {
+			FuncionesVentanas.irAVentana(this, new VentanaContactos());
+		});
+		panelAceptarCancelar.add(btnCancelar);
+		
+		Component horizontalGlue_2 = Box.createHorizontalGlue();
+		panelAceptarCancelar.add(horizontalGlue_2);
+		
+		return panelAceptarCancelar;
+	}
+	
+	/**
+	 * Cuando se pulsa <code>boton</code>, se crea un grupo con los campos especificados si son correctos.
+	 * @param boton
+	 */
+	private void addManejadorCrearGrupo(JButton boton) {
+		boton.addActionListener(ev -> {
 			// Nombre
 			String nombreDeGrupo = fieldNombreDelGrupo.getText();
 			nombreDeGrupo = nombreDeGrupo.replaceAll("\\s+", " ").trim();
@@ -83,10 +154,11 @@ public class VentanaAddGrupo extends JFrame {
 			List<ContactoIndividual> contactosSeleccionados = listaContactos.getSelectedValuesList();
 			// Imagen
 			String imagen = fieldFotoDelGrupo.getText();
-			boolean imagenCorrectaOEnBlanco = true; // Si la imagen se ha introducido y es incorrecta, se dice
+			 // Si la imagen se ha introducido y es incorrecta, se dice
+			boolean imagenCorrectaOEnBlanco = true;
 			try {
 				if(imagen.length() == 0) {
-					imagenCorrectaOEnBlanco = true; // Está en blanco
+					imagenCorrectaOEnBlanco = true;
 				}else {
 					URL url = new URL(imagen);
 					BufferedImage image = ImageIO.read(url);
@@ -112,64 +184,6 @@ public class VentanaAddGrupo extends JFrame {
 				this.dispose();
 			}
 		});
-		panelAceptarCancelar.add(btnCrearGrupo);
-		
-		Component horizontalGlue_1 = Box.createHorizontalGlue();
-		panelAceptarCancelar.add(horizontalGlue_1);
-		
-		JButton btnCancelar = new JButton("Cancelar");
-		btnCancelar.setBackground(FuncionesVentanas.COLOR_ROSA);
-		btnCancelar.addActionListener(ev -> {
-			VentanaContactos nuevaVentana = new VentanaContactos();
-			nuevaVentana.setVisible(true);
-			nuevaVentana.setLocationRelativeTo(this);
-			this.dispose();
-		});
-		panelAceptarCancelar.add(btnCancelar);
-		
-		Component horizontalGlue_2 = Box.createHorizontalGlue();
-		panelAceptarCancelar.add(horizontalGlue_2);
-		
-		JPanel panelNombreYFoto = new JPanel();
-		contentPane.add(panelNombreYFoto, BorderLayout.NORTH);
-		panelNombreYFoto.setLayout(new BoxLayout(panelNombreYFoto, BoxLayout.Y_AXIS));
-		
-		JPanel panelNombre = new JPanel();
-		panelNombreYFoto.add(panelNombre);
-		panelNombre.setLayout(new BoxLayout(panelNombre, BoxLayout.X_AXIS));
-		
-		JLabel lblNombre = new JLabel("Introduce el nombre:");
-		panelNombre.add(lblNombre);
-		
-		fieldNombreDelGrupo = new JTextField();
-		panelNombre.add(fieldNombreDelGrupo);
-		fieldNombreDelGrupo.setColumns(10);
-		
-		JPanel panelFoto = new JPanel();
-		panelNombreYFoto.add(panelFoto);
-		panelFoto.setLayout(new BoxLayout(panelFoto, BoxLayout.X_AXIS));
-		
-		JLabel lblFoto = new JLabel("Introduce la URL a la imagen (opcional): ");
-		panelFoto.add(lblFoto);
-		
-		fieldFotoDelGrupo = new JTextField();
-		panelFoto.add(fieldFotoDelGrupo);
-		fieldFotoDelGrupo.setColumns(10);
-		
-		JScrollPane scrollPaneContactos = new JScrollPane();
-		contentPane.add(scrollPaneContactos, BorderLayout.CENTER);
-		
-		DefaultListModel<ContactoIndividual> modelo = new DefaultListModel<>();
-		Controlador.getUnicaInstancia().getContactos().stream()
-			.filter(c -> c instanceof ContactoIndividual)
-			.map(c -> (ContactoIndividual) c)
-			.forEach(modelo::addElement);
-		listaContactos = new JList<ContactoIndividual>(modelo);
-		listaContactos.setBackground(new Color(238, 238, 238));
-        listaContactos.setCellRenderer(new ContactoCellRenderer());
-        listaContactos.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
-		scrollPaneContactos.setViewportView(listaContactos);
 	}
 
 }

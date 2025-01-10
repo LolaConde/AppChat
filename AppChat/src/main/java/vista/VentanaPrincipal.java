@@ -2,7 +2,6 @@ package vista;
 
 import java.awt.EventQueue;
 import java.awt.Image;
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
@@ -27,20 +26,14 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.imageio.ImageIO;
-import javax.swing.AbstractListModel;
 import java.awt.Dimension;
 import java.awt.Color;
 import javax.swing.ImageIcon;
 
 import tds.BubbleText;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.JTextField;
-import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JPopupMenu;
@@ -67,19 +60,6 @@ public class VentanaPrincipal extends JFrame {
 	private DefaultListModel<Mensaje> modelo;
 	private Usuario usuarioConChatMostrado = null;
 	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaPrincipal frame = new VentanaPrincipal();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
 	/**
 	 * Crea la ventana
 	 */
@@ -101,21 +81,18 @@ public class VentanaPrincipal extends JFrame {
 		contentPane.add(panelCentral, BorderLayout.CENTER);
 	}
 	
-	/**
-	 * Crea <code>panelCentral</code>.
-	 */
 	private void crearPanelCentral() {
 		panelCentral = new JPanel();
 		panelCentral.setLayout(new BorderLayout(0, 0));
 		
-		// TextField para enviar mensajes
+		// Escribir mensaje
 		textField = new JTextField();
 		addManejadorEnviarMensaje();
 		textField.setColumns(10);
 		textField.setVisible(false); // No se muestra hasta que no se selecciona un chat
 		panelCentral.add(textField, BorderLayout.SOUTH);
 		
-		// ScrollPane con panelDelChat para mostrar el chat actual
+		// Mensajes del chat actual
 		scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
@@ -131,10 +108,10 @@ public class VentanaPrincipal extends JFrame {
 		popupMenuAddContacto.add(opcionAddContacto);
 		panelDelChat.add(popupMenuAddContacto);
 		
-		// PopUp Menú en el chat con el usuario no agregado
 		panelDelChat.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				// Sólo si el usuario no está agregado
 				if(SwingUtilities.isRightMouseButton(e) && usuarioConChatMostrado != null && !Controlador.getUnicaInstancia().getNombreDeContacto(usuarioConChatMostrado).isPresent())
 					popupMenuAddContacto.show(panelDelChat, e.getX(), e.getY());
 			}
@@ -177,8 +154,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 	
 	/**
-	 * Añade a un JMenuItem indicado, un manejador de forma que si se selecciona el item, se
-	 * pide el nombre de contacto y se añade el contacto del usuario cuyo chat se muestra actualmente.
+	 * Si se selecciona <code>menuItem</code>, se pide el nombre de contacto y se añade el contacto del usuario cuyo chat se muestra actualmente.
 	 */
 	private void addManejadorAddContacto(JMenuItem menuItem) {
 		menuItem.addActionListener(ev -> {
@@ -210,7 +186,6 @@ public class VentanaPrincipal extends JFrame {
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {"contacto 1", "contacto 2", "contacto 3"}));
 		botonera.add(comboBox);
 		
-		// Horizontal Strut
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		horizontalStrut.setPreferredSize(new Dimension(10, 0));
 		horizontalStrut.setMaximumSize(new Dimension(10, 32767));
@@ -229,7 +204,6 @@ public class VentanaPrincipal extends JFrame {
 		});
 		botonera.add(botonEnviar);
 		
-		// Horizontal Strut
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
 		horizontalStrut_1.setPreferredSize(new Dimension(10, 0));
 		botonera.add(horizontalStrut_1);
@@ -241,7 +215,6 @@ public class VentanaPrincipal extends JFrame {
 		botonBuscar.addActionListener(ev -> {FuncionesVentanas.irAVentana(this, new VentanaBuscarMensajes());});
 		botonera.add(botonBuscar);
 		
-		// Horizontal Strut
 		Component horizontalStrut_2 = Box.createHorizontalStrut(20);
 		horizontalStrut_2.setPreferredSize(new Dimension(10, 0));
 		botonera.add(horizontalStrut_2);
@@ -258,7 +231,6 @@ public class VentanaPrincipal extends JFrame {
 		});
 		botonera.add(botonContactos);
 		
-		// Horizontal Glue
 		Component horizontalGlue = Box.createHorizontalGlue();
 		botonera.add(horizontalGlue);
 		
@@ -267,7 +239,6 @@ public class VentanaPrincipal extends JFrame {
 		botonPremium.setBackground(FuncionesVentanas.COLOR_ROSA);
 		botonera.add(botonPremium);
 		
-		// Horizontal Strut
 		Component horizontalStrut_3 = Box.createHorizontalStrut(20);
 		horizontalStrut_3.setPreferredSize(new Dimension(10, 0));
 		botonera.add(horizontalStrut_3);
@@ -277,14 +248,13 @@ public class VentanaPrincipal extends JFrame {
 		muestraImagenDePerfil(Controlador.getUnicaInstancia().getImagenDePerfil());
 		botonera.add(lblImagen);
 		
-		// PopUp Menú: Cambio foto de perfil
+		// PopUp Menú: Cambio foto de perfil (en imagen de perfil del usuario)
 		JPopupMenu popupMenu = new JPopupMenu();
 		JMenuItem opcionCambiarFoto = new JMenuItem("Cambiar foto de perfil");
 		addManejadorCambioDeImagen(opcionCambiarFoto);
 		popupMenu.add(opcionCambiarFoto);
 		botonera.add(popupMenu);
 		
-		// PopUp Menú en la imagen de perfil del usuario
 		lblImagen.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -296,10 +266,10 @@ public class VentanaPrincipal extends JFrame {
 	}
 	
 	/**
-	 * Añade un listener a <code>menuItem</code>. Cuando se activa, solicita una URL de una nueva imagen de perfil, 
+	 * Cuando se selecciona <code>menuItem</code>, solicita una URL de una nueva imagen de perfil, 
 	 * y la actualiza si es válida y accesible.
 	 * 
-	 * @param menuItem El elemento al que se le añadirá el ActionListener
+	 * @param menuItem
 	 */
 	private void addManejadorCambioDeImagen(JMenuItem menuItem) {
 		menuItem.addActionListener(ev -> {
@@ -317,8 +287,8 @@ public class VentanaPrincipal extends JFrame {
 	}
 	
 	/**
-	 * Muestra en el chat actual (en <code>panelDelChat</code>) el mensaje introducido como parámetro.
-	 * @param mensaje El mensaje a mostrar
+	 * Muestra en el chat actual (en <code>panelDelChat</code>) el mensaje <code>mensaje</code>.
+	 * @param mensaje
 	 */
 	private void mostrarMensaje(Mensaje mensaje) {
 		if(mensaje.getEmoticono().isPresent()) {
@@ -410,9 +380,9 @@ public class VentanaPrincipal extends JFrame {
 	
 	/**
 	 * Muestra la imagen de perfil en la ventana, 
-	 * actualizando el componente <code>lblImage</code> con la imagen obtenida de la URL proporcionada.
+	 * actualizando el componente <code>lblImage</code> con la imagen obtenida de la URL <code>url</code>.
 	 * 
-	 * @param url La url de la imagen de perfil a mostrar
+	 * @param url
 	 */
 	private void muestraImagenDePerfil(String url) {
 		Image image;

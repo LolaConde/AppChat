@@ -11,18 +11,11 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JPanel;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import javax.swing.ImageIcon;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
-import java.awt.FlowLayout;
-import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
 import java.awt.Insets;
 import javax.swing.UIManager;
 
@@ -30,12 +23,6 @@ import controlador.Controlador;
 
 import javax.swing.JPasswordField;
 import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class VentanaLogin {
 
@@ -126,7 +113,7 @@ public class VentanaLogin {
 		gbl_panelLogin.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		panelLogin.setLayout(gbl_panelLogin);
 		
-		// Campo teléfono: Texto
+		// Introduce el teléfono
 		JLabel telfTxt = new JLabel("Teléfono:");
 		GridBagConstraints gbc_telfTxt = new GridBagConstraints();
 		gbc_telfTxt.insets = new Insets(0, 0, 5, 5);
@@ -135,7 +122,6 @@ public class VentanaLogin {
 		gbc_telfTxt.gridy = 1;
 		panelLogin.add(telfTxt, gbc_telfTxt);
 		
-		// Campo teléfono: field
 		telfTxtField = new JTextField();
 		FuncionesVentanas.addManejadorFieldTelefono(telfTxtField);
 		GridBagConstraints gbc_telfTxtField = new GridBagConstraints();
@@ -146,7 +132,7 @@ public class VentanaLogin {
 		panelLogin.add(telfTxtField, gbc_telfTxtField);
 		telfTxtField.setColumns(20);
 		
-		// Campo contraseña: Texto
+		// Introduce la contraseña
 		JLabel passTxt = new JLabel("Contrase\u00F1a:");
 		GridBagConstraints gbc_passTxt = new GridBagConstraints();
 		gbc_passTxt.anchor = GridBagConstraints.EAST;
@@ -155,7 +141,6 @@ public class VentanaLogin {
 		gbc_passTxt.gridy = 2;
 		panelLogin.add(passTxt, gbc_passTxt);
 		
-		// Campo contraseña: field
 		passwordField = new JPasswordField();
 		passwordField.setColumns(20);
 		GridBagConstraints gbc_passwordField = new GridBagConstraints();
@@ -165,7 +150,6 @@ public class VentanaLogin {
 		gbc_passwordField.gridy = 2;
 		panelLogin.add(passwordField, gbc_passwordField);
 		
-		// Campo contraseña: Opción mostrar
 		JLabel mostrar = FuncionesVentanas.opcionMostrarPassword(passwordField);
 		GridBagConstraints gbc_Mostrar = new GridBagConstraints();
 		gbc_Mostrar.insets = new Insets(0, 0, 5, 5);
@@ -173,7 +157,7 @@ public class VentanaLogin {
 		gbc_Mostrar.gridy = 2;
 		panelLogin.add(mostrar, gbc_Mostrar);
 		
-		// Campo login (botón)
+		// Botón login
 		JButton botonLogin = new JButton("Login");
 		botonLogin.setForeground(new Color(0, 0, 0));
 		botonLogin.setBackground(FuncionesVentanas.COLOR_ROSA);
@@ -204,10 +188,7 @@ public class VentanaLogin {
 			int telf = Integer.parseInt(this.telfTxtField.getText());
 			String passw = new String(this.passwordField.getPassword());
 			if(Controlador.getUnicaInstancia().login(telf, passw)) {
-				JFrame ventanaPrincipal = new VentanaPrincipal();
-				ventanaPrincipal.setVisible(true);
-				ventanaPrincipal.setLocationRelativeTo(frame);
-				frame.dispose();
+				FuncionesVentanas.irAVentana(frame, new VentanaPrincipal());
 			} else {
 				JOptionPane.showMessageDialog(frame, "Error de login");
 			}
