@@ -235,8 +235,9 @@ public class VentanaPrincipal extends JFrame {
 		botonera.add(horizontalGlue);
 		
 		// Botón de Premium
-		JButton botonPremium = new JButton("Premium");
+		JButton botonPremium = new JButton("Hazte premium");
 		botonPremium.setBackground(FuncionesVentanas.COLOR_ROSA);
+		botonPremium.addActionListener(ev -> {FuncionesVentanas.irAVentana(this, new VentanaPagarPremium());});
 		botonera.add(botonPremium);
 		
 		Component horizontalStrut_3 = Box.createHorizontalStrut(20);
