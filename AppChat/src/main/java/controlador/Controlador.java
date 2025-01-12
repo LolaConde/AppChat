@@ -92,7 +92,10 @@ public class Controlador {
 	 * @return Lista con todos los mensajes que ha enviado o recibido el usuario actual
 	 */
 	public List<Mensaje> getTodosMensajes(){
-		return Stream.of(usuarioActual.getMensajesEnviados(), usuarioActual.getMensajesRecibidos()).flatMap(lista -> lista.stream()).collect(Collectors.toList());
+		return Stream.of(usuarioActual.getMensajesEnviados(), usuarioActual.getMensajesRecibidos())
+				.flatMap(lista -> lista.stream())
+				.sorted((m1, m2) -> - m1.getFechaYHora().compareTo(m2.getFechaYHora()))
+				.collect(Collectors.toList());
 	}
 	
 	/**

@@ -11,6 +11,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -28,6 +29,8 @@ public class VentanaBuscarMensajes extends JFrame {
 	private JTextField fieldTelefono;
 	private JTextField fieldContacto;
 	private DefaultListModel<Mensaje> modelo;
+	private JScrollPane panelConLista;
+	private JList<Mensaje> listaMensajes;
 	
 	/**
 	 * Create the frame.
@@ -45,7 +48,8 @@ public class VentanaBuscarMensajes extends JFrame {
 		// Panel con filtros
 		contentPane.add(panelBusqueda(), BorderLayout.NORTH);
 		// Panel con mensajes filtrados
-		contentPane.add(listaDeMensajesConScroll(), BorderLayout.CENTER);
+		listaDeMensajesConScroll();
+		contentPane.add(panelConLista, BorderLayout.CENTER);
 		
 		// Botón de cancelar
 		JButton btnCancelar = new JButton("Cancelar");
@@ -54,26 +58,33 @@ public class VentanaBuscarMensajes extends JFrame {
 		});
 		btnCancelar.setBackground(new Color(192, 192, 192));
 		contentPane.add(btnCancelar, BorderLayout.SOUTH);
-
+		
+		// Añadir todos los mensajes
+		SwingUtilities.invokeLater(() -> {
+			addMensajes();
+		});
 	}
 	
 	/**
-	 * @return JScrollPane con una lista de mensajes filtrados según <code>modelo</code>
+	 * panelConLista se inicializa como un JScrollPane con una lista de mensajes filtrados según <code>modelo</code>
 	 */
-	private JScrollPane listaDeMensajesConScroll() {
-		JScrollPane scrollPane = new JScrollPane();
+	private void listaDeMensajesConScroll() {
+		panelConLista = new JScrollPane();
+		panelConLista.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		panelConLista.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		
-		// Crear un modelo de lista y agregar elementos
+		// Crear un modelo de lista
 		modelo = new DefaultListModel<Mensaje>();
-        Controlador.getUnicaInstancia().getTodosMensajes().stream().forEachOrdered(modelo::addElement);
         
         // Crear el JList basado en el modelo
-        JList<Mensaje> listaMensajes = new JList<>(modelo);
+        listaMensajes = new JList<>(modelo);
         listaMensajes.setBackground(new Color(238, 238, 238));
-        listaMensajes.setCellRenderer(new MensajeCellRenderer2());
-		scrollPane.setViewportView(listaMensajes);
-		
-		return scrollPane;
+        listaMensajes.setCellRenderer(new MensajeCellRenderer4());
+        listaMensajes.setLayoutOrientation(JList.VERTICAL);
+        listaMensajes.setFixedCellWidth(panelConLista.getWidth() -5); // Mensajes no se pasen del ancho + 5 píxeles extra de margen
+        panelConLista.setViewportView(listaMensajes);
+        
+        addMensajes();
 	}
 	
 	/**
@@ -138,12 +149,19 @@ public class VentanaBuscarMensajes extends JFrame {
 		btnBuscar.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnBuscar.setBackground(FuncionesVentanas.COLOR_ROSA);
 		btnBuscar.addActionListener(ev -> {
-			modelo.removeAllElements();
-			Controlador.getUnicaInstancia().getMensajesFiltrados(fieldContacto.getText(), fieldTexto.getText(), fieldTelefono.getText()).forEach(modelo::addElement);
+			addMensajes();
 		});
 		panelBusqueda.add(btnBuscar);
 		
 		return panelBusqueda;
+	}
+	
+	/**
+	 * Elimina los mensajes del modelo, y añade los mensajes que cumplen los filtros indicados.
+	 */
+	private void addMensajes() {
+		modelo.removeAllElements();
+		Controlador.getUnicaInstancia().getMensajesFiltrados(fieldContacto.getText(), fieldTexto.getText(), fieldTelefono.getText()).stream().forEachOrdered(modelo::addElement);
 	}
 
 }
