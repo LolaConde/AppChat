@@ -26,12 +26,13 @@ public class Usuario {
     
     private boolean isPremium;
     private Descuento descuento;
+    private LocalDate fechaRegistro; // Existen descuentos dirigidos a usuarios registrados en un intervalo de fechas
     
-    private int codigo;
+	private int codigo;
     
     // Constructor
     public Usuario(String nombreCompleto, String password, int numeroTelefono, String email, LocalDate fechaNacimiento,
-			String imagenPerfil, String saludo) {
+			String imagenPerfil, String saludo, LocalDate fechaRegistro) {
 		this.nombreCompleto = nombreCompleto;
 		this.password = password;
 		this.numeroTelefono = numeroTelefono;
@@ -43,15 +44,16 @@ public class Usuario {
 		this.mensajesRecibidos = new ArrayList<Mensaje>();
 		this.contactos = new ArrayList<Contacto>();
 		this.isPremium = false;
-		this.descuento = null;
+		this.descuento = new DescuentoNull();
 		this.codigo = 0;
+		this.fechaRegistro = fechaRegistro;
 	}
     
     // Constructor: sin saludo
     // Para registrarse en el sistema, un usuario debe indicar ... y un mensaje de saludo opcional
     public Usuario(String nombreCompleto, String password, int numeroTelefono, String email, LocalDate fechaNacimiento,
-			String imagenPerfil) {
-    	this(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, SALUDO_POR_DEFECTO);
+			String imagenPerfil, LocalDate fechaRegistro) {
+    	this(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, SALUDO_POR_DEFECTO, fechaRegistro);
     }
     
     public void setCodigo(int codigo) {
@@ -60,6 +62,10 @@ public class Usuario {
 
 	public int getCodigo() {
 		return codigo;
+	}
+	
+	public LocalDate getFechaRegistro() {
+		return fechaRegistro;
 	}
     
     public int getNumeroTelefono() {
@@ -192,7 +198,7 @@ public class Usuario {
 	}
 
 	public void setDescuento(Descuento descuento) {
-		this.descuento = descuento;
+		this.descuento = descuento == null ? new DescuentoNull() : descuento;
 	}
 
 	public void recibirMensaje(Mensaje mensaje) {
@@ -200,6 +206,17 @@ public class Usuario {
     		this.mensajesRecibidos.add(mensaje);
     	}
     }
+	
+	/**
+	 * @return Número de mensajes enviados por el usuario desde hace un mes hasta hoy.
+	 */
+	public long contarMensajesEnviadosEsteMes() {
+		return Stream.of(mensajesEnviados, mensajesRecibidos)
+			.flatMap(listaMensajes -> listaMensajes.stream())
+			.filter(m -> m.getFechaYHora().isAfter(LocalDateTime.now().minusMonths(1)))
+			.filter(m -> m.isEmisor(this))
+			.count();
+	}
     
 	/**
 	 * @return Lista ordenada por fecha con el último mensaje de cada chat del usuario

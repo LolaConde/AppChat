@@ -15,4 +15,9 @@ public class TDSFactoriaDAO extends FactoriaDAO {
 	public IAdaptadorContactoDAO getContactoDAO() {
 		return AdaptadorContactoTDS.getUnicaInstancia();
 	}
+
+	@Override
+	public IAdaptadorDescuentoDAO getDescuentoDAO() {
+		return AdaptadorDescuentoTDS.getUnicaInstancia();
+	}
 }

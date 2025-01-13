@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 
 import modelo.Contacto;
 import modelo.ContactoIndividual;
+import modelo.Descuento;
 import modelo.GeneradorPDF;
 import modelo.GrupoDeContactos;
 import modelo.Mensaje;
@@ -21,6 +22,7 @@ import modelo.Usuario;
 import persistencia.DAOException;
 import persistencia.FactoriaDAO;
 import persistencia.IAdaptadorContactoDAO;
+import persistencia.IAdaptadorDescuentoDAO;
 import persistencia.IAdaptadorMensajeDAO;
 import persistencia.IAdaptadorUsuarioDAO;
 import tds.BubbleText;
@@ -34,6 +36,7 @@ public class Controlador {
 	private IAdaptadorUsuarioDAO adaptadorUsuario;
 	private IAdaptadorMensajeDAO adaptadorMensaje;
 	private IAdaptadorContactoDAO adaptadorContacto; 
+	private IAdaptadorDescuentoDAO adaptadorDescuento;
 	
 	public Usuario getUsuarioActual() {
 		return usuarioActual;
@@ -59,9 +62,17 @@ public class Controlador {
 		return mensaje.obtenerElOtroUsuario(usuarioActual);
 	}
 	
+	public boolean isUsuarioActualPremium() {
+		return usuarioActual.isPremium();
+	}
+	
+	public Descuento getDescuentoUsuarioActual() {
+		return usuarioActual.getDescuento();
+	}
+	
 	public void registrarUsuario(String nombreCompleto, String password, int numeroTelefono, String email, LocalDate fechaNacimiento,
 			String imagenPerfil, String saludo) {
-		Usuario usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, saludo);
+		Usuario usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, saludo, LocalDate.now());
 		adaptadorUsuario.registrarUsuario(usuario);
 		repositorioUsuarios.addUsuario(usuario);
 	}
@@ -305,6 +316,7 @@ public class Controlador {
 		adaptadorUsuario = factoria.getUsuarioDAO();
 		adaptadorMensaje = factoria.getMensajeDAO();
 		adaptadorContacto = factoria.getContactoDAO();
+		adaptadorDescuento = factoria.getDescuentoDAO();
 	}
 	
 	private void inicializarRepositorios() {
@@ -321,6 +333,13 @@ public class Controlador {
 		}
 		// El texto no se refiere a ningún emoticono
 		return Optional.empty();
+	}
+	
+	public void hacerPremium(Descuento descuento) {
+		usuarioActual.setPremium(true);
+		usuarioActual.setDescuento(descuento);
+		adaptadorDescuento.registrarDescuento(descuento);
+		adaptadorUsuario.modificarUsuario(usuarioActual);
 	}
 	
 }

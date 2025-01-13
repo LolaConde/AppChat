@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import modelo.Contacto;
+import modelo.Descuento;
 import modelo.Mensaje;
 import modelo.Usuario;
 
@@ -32,7 +33,6 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 	
 	@Override
 	public void registrarUsuario(Usuario usuario) {
-		// TODO Add Descuento
 		Entidad eUsuario = null;
 		
 		// Si la entidad esta registrada no la registra de nuevo
@@ -49,7 +49,11 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		AdaptadorMensajeTDS adaptadorMensaje = AdaptadorMensajeTDS.getUnicaInstancia();
 		usuario.getMensajesEnviados().stream().forEach(adaptadorMensaje::registrarMensaje);
 		usuario.getMensajesRecibidos().stream().forEach(adaptadorMensaje::registrarMensaje);
-
+		
+		// Registrar Descuento
+		AdaptadorDescuentoTDS adaptadorDescuento = AdaptadorDescuentoTDS.getUnicaInstancia();
+		adaptadorDescuento.registrarDescuento(usuario.getDescuento());
+		
 		// Crear entidad Cliente
 		eUsuario = new Entidad();
 		eUsuario.setNombre("usuario");
@@ -64,7 +68,9 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 						new Propiedad("isPremium", usuario.isPremium() ? "true" : "false"),
 						new Propiedad("contactos", obtenerCodigosContactos(usuario.getContactos())),
 						new Propiedad("mensajesEnviados", obtenerCodigosMensajes(usuario.getMensajesEnviados())),
-						new Propiedad("mensajesRecibidos", obtenerCodigosMensajes(usuario.getMensajesRecibidos()))
+						new Propiedad("mensajesRecibidos", obtenerCodigosMensajes(usuario.getMensajesRecibidos())),
+						new Propiedad("fechaRegistro", usuario.getFechaRegistro().toString()),
+						new Propiedad("descuento", Integer.toString(usuario.getDescuento().getCodigo()))
 						)));
 		
 		// Registrar entidad cliente
@@ -101,8 +107,9 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		String imagenPerfil = servPersistencia.recuperarPropiedadEntidad(eUsuario, "imagenPerfil");
 		String saludo = servPersistencia.recuperarPropiedadEntidad(eUsuario, "saludo");
 		Boolean isPremium = servPersistencia.recuperarPropiedadEntidad(eUsuario, "isPremium").equals("true");
+		LocalDate fechaRegistro = LocalDate.parse(servPersistencia.recuperarPropiedadEntidad(eUsuario, "fechaRegistro"));
 		
-		Usuario usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, saludo);
+		Usuario usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, saludo, fechaRegistro);
 		usuario.setPremium(isPremium);
 		usuario.setCodigo(codigo);
 		
@@ -113,10 +120,12 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		List<Contacto> contactos = obtenerContactosDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eUsuario, "contactos"));
 		List<Mensaje> mensajesEnviados = this.obtenerMensajesDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eUsuario, "mensajesEnviados"));
 		List<Mensaje> mensajesRecibidos = this.obtenerMensajesDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eUsuario, "mensajesRecibidos"));
+		Descuento descuento = AdaptadorDescuentoTDS.getUnicaInstancia().recuperarDescuento(Integer.valueOf(servPersistencia.recuperarPropiedadEntidad(eUsuario, "descuento")));
 		
 		usuario.setContactos(contactos);
 		usuario.setMensajesEnviados(mensajesEnviados);
 		usuario.setMensajesRecibidos(mensajesRecibidos);
+		usuario.setDescuento(descuento);
 		
 		return usuario;
 	}
@@ -197,6 +206,11 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 			}
 			else if(prop.getNombre().equals("mensajesRecibidos")) {
 				prop.setValor(obtenerCodigosMensajes(usuario.getMensajesRecibidos()));
+			}
+			else if(prop.getNombre().equals("fechaRegistro")) {
+				prop.setValor(usuario.getFechaRegistro().toString());
+			} else if(prop.getNombre().equals("descuento")) {
+				prop.setValor(Integer.toString(usuario.getDescuento().getCodigo()));
 			}
 			servPersistencia.modificarPropiedad(prop);
 		}
