@@ -3,6 +3,8 @@ package controlador;
 import java.awt.Image;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -14,6 +16,9 @@ import javax.imageio.ImageIO;
 import modelo.Contacto;
 import modelo.ContactoIndividual;
 import modelo.Descuento;
+import modelo.DescuentoFecha;
+import modelo.DescuentoMensaje;
+import modelo.DescuentoNull;
 import modelo.GeneradorPDF;
 import modelo.GrupoDeContactos;
 import modelo.Mensaje;
@@ -25,6 +30,7 @@ import persistencia.IAdaptadorContactoDAO;
 import persistencia.IAdaptadorDescuentoDAO;
 import persistencia.IAdaptadorMensajeDAO;
 import persistencia.IAdaptadorUsuarioDAO;
+import premium.PreciosPremium;
 import tds.BubbleText;
 
 public class Controlador {
@@ -335,11 +341,26 @@ public class Controlador {
 		return Optional.empty();
 	}
 	
+	/**
+	 * Convierte al usuario actual en un usuario premium aplicándole el descuento <code>descuento</code>. 
+	 * También lo guarda en la base de datos.
+	 * 
+	 * @param descuento
+	 */
 	public void hacerPremium(Descuento descuento) {
 		usuarioActual.setPremium(true);
 		usuarioActual.setDescuento(descuento);
 		adaptadorDescuento.registrarDescuento(descuento);
 		adaptadorUsuario.modificarUsuario(usuarioActual);
+	}
+	
+	/**
+	 * Considera sólo los descuentos disponibles y aplicables al usuario actual en el momento de la llamada a la función.
+	 * 
+	 * @return El descuento que resulta en menor precio final para el usuario actual.
+	 */
+	public Descuento obtenerMejorDescuentoDisponible() {
+		return PreciosPremium.INSTANCE.obtenerMejorDescuentoDisponible(usuarioActual);
 	}
 	
 }

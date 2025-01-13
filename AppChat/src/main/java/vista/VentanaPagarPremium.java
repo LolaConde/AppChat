@@ -3,31 +3,23 @@ package vista;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import controlador.Controlador;
+import modelo.Descuento;
+import modelo.DescuentoNull;
+import premium.PreciosPremium;
+
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Color;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
 import java.awt.Component;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.Box;
-import javax.swing.JTextArea;
-import javax.swing.DropMode;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JButton;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.CardLayout;
-import java.awt.BorderLayout;
-import javax.swing.JTextPane;
 
 public class VentanaPagarPremium extends JFrame {
 
@@ -91,16 +83,44 @@ public class VentanaPagarPremium extends JFrame {
 		lblTituloDescuento.setFont(new Font("Dialog", Font.BOLD, 14));
 		contentPane.add(lblTituloDescuento);
 		
+		Component verticalStrut_4 = Box.createVerticalStrut(10);
+		contentPane.add(verticalStrut_4);
+		
+		JLabel lblDescuentoMenor = new JLabel("(se aplica el que menor precio final dé)");
+		lblDescuentoMenor.setFont(new Font("Dialog", Font.PLAIN, 10));
+		lblDescuentoMenor.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contentPane.add(lblDescuentoMenor);
+		
 		Component verticalStrut_1 = Box.createVerticalStrut(10);
 		contentPane.add(verticalStrut_1);
 		
 		// Explicación del descuento
-		JLabel lblExplicacionDescuento = new JLabel("<html><center>Lo siento, no has tenido suerte. No cumples la condición para obtener un descuento. Pero no te desanimes, ¡Quizás el año que viene tengas más suerte!</center></html>");
+		Descuento descuento = Controlador.getUnicaInstancia().obtenerMejorDescuentoDisponible();
+		String explicacionNoDescuento = "Lo siento, no has tenido suerte. No cumples la condición para obtener un descuento. Pero no te desanimes, ¡Quizás el año que viene tengas más suerte!";
+		String explicacionDescuento = descuento instanceof DescuentoNull ? explicacionNoDescuento : descuento.toString();
+		
+		JLabel lblExplicacionDescuento = new JLabel("<html><center>" + explicacionDescuento + "</center></html>");
 		lblExplicacionDescuento.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblExplicacionDescuento.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblExplicacionDescuento.setHorizontalAlignment(SwingConstants.CENTER);
 		lblExplicacionDescuento.setHorizontalTextPosition(SwingConstants.CENTER);
 		contentPane.add(lblExplicacionDescuento);
+		
+		Component verticalStrut_2 = Box.createVerticalStrut(20);
+		contentPane.add(verticalStrut_2);
+		
+		JLabel lblNewLabel = new JLabel("Precio final:");
+		lblNewLabel.setFont(new Font("Dialog", Font.BOLD, 14));
+		lblNewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contentPane.add(lblNewLabel);
+		
+		Component verticalStrut_3 = Box.createVerticalStrut(10);
+		contentPane.add(verticalStrut_3);
+		
+		JLabel lblNewLabel_1 = new JLabel(descuento.calcularDescuento(PreciosPremium.PRECIO_PREMIUM) + " €");
+		lblNewLabel_1.setFont(new Font("Dialog", Font.PLAIN, 12));
+		lblNewLabel_1.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contentPane.add(lblNewLabel_1);
 		
 		Component verticalGlue_1 = Box.createVerticalGlue();
 		contentPane.add(verticalGlue_1);
@@ -126,6 +146,7 @@ public class VentanaPagarPremium extends JFrame {
 		btnPagarPremium.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnPagarPremium.setBackground(FuncionesVentanas.COLOR_ROSA);
 		btnPagarPremium.addActionListener(ev -> {
+			Controlador.getUnicaInstancia().hacerPremium(descuento);
 			FuncionesVentanas.irAVentana(this, new VentanaEnhorabuenaPremium());
 		});
 		panelPagarCancelar.add(btnPagarPremium);

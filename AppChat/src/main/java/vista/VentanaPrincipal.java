@@ -235,9 +235,17 @@ public class VentanaPrincipal extends JFrame {
 		botonera.add(horizontalGlue);
 		
 		// Botón de Premium
-		JButton botonPremium = new JButton("Hazte premium");
+		JButton botonPremium = new JButton("");
+		if(Controlador.getUnicaInstancia().isUsuarioActualPremium()){
+			botonPremium.setText("Eres premium");
+			botonPremium.addActionListener(ev -> {FuncionesVentanas.irAVentana(this, new VentanaPremium());});
+		}
+		else {
+			botonPremium.setText("Hazte premium");
+			botonPremium.addActionListener(ev -> {FuncionesVentanas.irAVentana(this, new VentanaPagarPremium());});
+		}
+		
 		botonPremium.setBackground(FuncionesVentanas.COLOR_ROSA);
-		botonPremium.addActionListener(ev -> {FuncionesVentanas.irAVentana(this, new VentanaPagarPremium());});
 		botonera.add(botonPremium);
 		
 		Component horizontalStrut_3 = Box.createHorizontalStrut(20);
@@ -386,14 +394,16 @@ public class VentanaPrincipal extends JFrame {
 	 * @param url
 	 */
 	private void muestraImagenDePerfil(String url) {
-		Image image;
+		Image image = null;
 		try {
 			URL imageUrl = new URL(url);
 			image = ImageIO.read(imageUrl);
 			
 		} catch (Exception e) {
-			image = FuncionesVentanas.ICONO_USUARIO_SIN_FOTO.getImage(); // Si no se puede acceder a la foto
 			e.printStackTrace();
+		}
+		if(image == null) {
+			image = FuncionesVentanas.ICONO_USUARIO_SIN_FOTO.getImage(); // Si no se puede acceder a la foto o no se puede leer
 		}
 		ImageIcon imageIcon = new ImageIcon(image.getScaledInstance(25, 25, Image.SCALE_SMOOTH));
 		lblImagen.setIcon(imageIcon);
