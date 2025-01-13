@@ -257,11 +257,19 @@ public class VentanaPrincipal extends JFrame {
 		muestraImagenDePerfil(Controlador.getUnicaInstancia().getImagenDePerfil());
 		botonera.add(lblImagen);
 		
-		// PopUp Menú: Cambio foto de perfil (en imagen de perfil del usuario)
+		// PopUp Menú: Cambio foto de perfil y salir (en imagen de perfil del usuario)
 		JPopupMenu popupMenu = new JPopupMenu();
 		JMenuItem opcionCambiarFoto = new JMenuItem("Cambiar foto de perfil");
 		addManejadorCambioDeImagen(opcionCambiarFoto);
 		popupMenu.add(opcionCambiarFoto);
+		JMenuItem opcionSalir = new JMenuItem("Log out");
+		opcionSalir.addActionListener(ev -> {
+			Controlador.getUnicaInstancia().logout();
+			VentanaLogin ventana = new VentanaLogin();
+			ventana.mostrarVentana(this);
+			this.dispose();
+		});
+		popupMenu.add(opcionSalir);
 		botonera.add(popupMenu);
 		
 		lblImagen.addMouseListener(new MouseAdapter() {

@@ -248,6 +248,10 @@ public class Controlador {
 		return false;
 	}
 	
+	public void logout() {
+		usuarioActual = null;
+	}
+	
 	/**
 	 * @param mensaje
 	 * @return true si el usuario actual es el emisor de <code>mensaje</code>. false en caso contrario.
