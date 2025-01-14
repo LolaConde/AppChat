@@ -39,14 +39,14 @@ public class VentanaRegistro extends JFrame {
 	private JPanel contentPane;
 	private JTextField nombreTxtField;
 	private JTextField apellidosTxtField;
-	private JTextField TelefonoTxtField;
+	private JTextField telefonoTxtField;
 	private JPasswordField passwordField1;
 	private JPasswordField passwordField2;
 	private JTextField imagenTxtField;
 	private JLabel txtNombre;
 	private JLabel txtApellidos;
 	private JLabel txtTelefono;
-	private JDateChooser FechaNacimientoDateChooser;
+	private JDateChooser fechaNacimientoDateChooser;
 	private JLabel txtFechaNacimiento;
 	private JLabel txtPass1;
 	private JLabel txtPass2;
@@ -109,8 +109,7 @@ public class VentanaRegistro extends JFrame {
 		button.addActionListener(ev -> {
 			Boolean datosCorrectos = comprobarDatosIntroducidos();
 			if (datosCorrectos) {
-				// TODO: Si no añade un saludo, usar el registro de usuario sin especificar el saludo
-				Controlador.getUnicaInstancia().registrarUsuario(nombreTxtField.getText() + " " + apellidosTxtField.getText(), new String(passwordField1.getPassword()), Integer.parseInt(TelefonoTxtField.getText()), "", FechaNacimientoDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), imagenTxtField.getText(), saludoField.getText());
+				Controlador.getUnicaInstancia().registrarUsuario(nombreTxtField.getText() + " " + apellidosTxtField.getText(), new String(passwordField1.getPassword()), Integer.parseInt(telefonoTxtField.getText()), "", fechaNacimientoDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), imagenTxtField.getText(), saludoField.getText());
 				JOptionPane.showMessageDialog(contentPane, "Usuario registrado correctamente", "Registro correcto", JOptionPane.PLAIN_MESSAGE);
 				// Ir al login
 				VentanaLogin ventanaLogin = new VentanaLogin();
@@ -177,15 +176,15 @@ public class VentanaRegistro extends JFrame {
 		gbc_txtTelefono.gridy = 5;
 		panelDatos.add(txtTelefono, gbc_txtTelefono);
 		
-		TelefonoTxtField = new JTextField();
-		FuncionesVentanas.addManejadorFieldTelefono(TelefonoTxtField);
+		telefonoTxtField = new JTextField();
+		FuncionesVentanas.addManejadorFieldTelefono(telefonoTxtField);
 		GridBagConstraints gbc_TelefonoTxtField = new GridBagConstraints();
 		gbc_TelefonoTxtField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_TelefonoTxtField.insets = new Insets(0, 0, 5, 5);
 		gbc_TelefonoTxtField.gridx = 3;
 		gbc_TelefonoTxtField.gridy = 5;
-		panelDatos.add(TelefonoTxtField, gbc_TelefonoTxtField);
-		TelefonoTxtField.setColumns(10);
+		panelDatos.add(telefonoTxtField, gbc_TelefonoTxtField);
+		telefonoTxtField.setColumns(10);
 		
 		// Fecha de nacimiento
 		txtFechaNacimiento = new JLabel("Fecha de nacimiento:");
@@ -196,13 +195,13 @@ public class VentanaRegistro extends JFrame {
 		gbc_txtFechaNacimiento.gridy = 5;
 		panelDatos.add(txtFechaNacimiento, gbc_txtFechaNacimiento);
 		
-		FechaNacimientoDateChooser = new JDateChooser();
+		fechaNacimientoDateChooser = new JDateChooser();
 		GridBagConstraints gbc_FechaNacimientoDateChooser = new GridBagConstraints();
 		gbc_FechaNacimientoDateChooser.insets = new Insets(0, 0, 5, 5);
 		gbc_FechaNacimientoDateChooser.fill = GridBagConstraints.BOTH;
 		gbc_FechaNacimientoDateChooser.gridx = 7;
 		gbc_FechaNacimientoDateChooser.gridy = 5;
-		panelDatos.add(FechaNacimientoDateChooser, gbc_FechaNacimientoDateChooser);
+		panelDatos.add(fechaNacimientoDateChooser, gbc_FechaNacimientoDateChooser);
 		
 		// Contraseña 1
 		txtPass1 = new JLabel("Contraseña:");
@@ -253,7 +252,7 @@ public class VentanaRegistro extends JFrame {
 		panelDatos.add(mostrarPassJLabel2, gbc_lblNewLabel_4);
 		
 		// Saludo
-		JLabel txtSaludo = new JLabel("Saludo:");
+		JLabel txtSaludo = new JLabel("Saludo (opcional):");
 		GridBagConstraints gbc_txtSaludo = new GridBagConstraints();
 		gbc_txtSaludo.anchor = GridBagConstraints.NORTHEAST;
 		gbc_txtSaludo.insets = new Insets(0, 0, 5, 5);
@@ -334,18 +333,23 @@ public class VentanaRegistro extends JFrame {
 			datosCorrectos = false;
 			explicacionDeErrores += "Los apellidos no pueden estar vacíos" + '\n';
 		}
-		if (TelefonoTxtField.getText().isEmpty()) {
+		if (telefonoTxtField.getText().isEmpty()) {
 			txtTelefono.setForeground(Color.RED);
 			explicacionDeErrores += "El teléfono no puede estar vacío" + '\n';
 			datosCorrectos = false;
 		}
-		else if(TelefonoTxtField.getText().chars().mapToObj(c -> (char) c).anyMatch(c -> !Character.isDigit(c))) {
+		else if(telefonoTxtField.getText().chars().mapToObj(c -> (char) c).anyMatch(c -> !Character.isDigit(c))) {
 			txtTelefono.setForeground(Color.RED);
 			explicacionDeErrores += "El teléfono solo puede tener números" + '\n';
 			datosCorrectos = false;
 		}
+		else if(Controlador.getUnicaInstancia().existeUsuario(Integer.valueOf(telefonoTxtField.getText()))){
+			txtTelefono.setForeground(Color.RED);
+			explicacionDeErrores += "El teléfono ya está asociado a otro usuario de la aplicación, debes utilizar un número diferente." + '\n';
+			datosCorrectos = false;
+		}
 		Date hoy = new Date();
-		if(FechaNacimientoDateChooser.getDate() == null || FechaNacimientoDateChooser.getDate().after(hoy)) {
+		if(fechaNacimientoDateChooser.getDate() == null || fechaNacimientoDateChooser.getDate().after(hoy)) {
 			txtFechaNacimiento.setForeground(Color.RED);
 			datosCorrectos = false;
 			explicacionDeErrores += "La fecha de nacimiento debe contener una fecha anterior a hoy" + '\n';

@@ -113,24 +113,7 @@ public class VentanaPrincipal extends JFrame {
 		opcionAddContacto = new JMenuItem("Añadir contacto");
 		addManejadorAddContacto(opcionAddContacto);
 		opcionExportarPdf = new JMenuItem("Exportar conversación en PDF");
-		opcionExportarPdf.addActionListener(ev -> {
-			// FileChooser
-			JFileChooser chooser = new JFileChooser();
-			int returnValue = chooser.showOpenDialog(this);
-			File file = chooser.getSelectedFile();
-			String url = file.getAbsolutePath();
-			// Si todo correcto, se crea el pdf
-			if (file.getParent()== null || !file.getParentFile().isDirectory()) {
-				JOptionPane.showMessageDialog(this, "Se debe seleccionar un fichero (no es necesario que exista) dentro de una carpeta existente", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-			else if(returnValue == JFileChooser.APPROVE_OPTION && url.toLowerCase().endsWith(".pdf")) {
-				Controlador.getUnicaInstancia().exportarPdf(usuarioConChatMostrado, url);
-				JOptionPane.showMessageDialog(this, "Se ha guardado el pdf correctamente, lo encontrarás en " + url, "Información", JOptionPane.INFORMATION_MESSAGE);
-			}
-			else {
-				JOptionPane.showMessageDialog(this, "Se debe seleccionar un fichero acabado en .pdf (no es necesario que exista)", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-			});
+		addManejadorExportarConversacionPDF(opcionExportarPdf);
 		popupMenuEnChat.add(opcionAddContacto);
 		popupMenuEnChat.add(opcionExportarPdf);
 		panelDelChat.add(popupMenuEnChat);
@@ -200,6 +183,32 @@ public class VentanaPrincipal extends JFrame {
 					Controlador.getUnicaInstancia().addContactoIndividual(usuarioConChatMostrado, nombreDeContacto);
 					JOptionPane.showMessageDialog(this, "Contacto añadido correctamente", "Información", JOptionPane.WARNING_MESSAGE);
 				}
+			}
+		});
+	}
+	
+	/**
+	 * Si se selecciona <code>menuItem</code>, exporta a pdf la conversación mostrada actualmente.
+	 * Se pide el nombre del fichero donde guardar el pdf.
+	 */
+	private void addManejadorExportarConversacionPDF(JMenuItem menuItem) {
+		menuItem.addActionListener(ev -> {
+			// FileChooser
+			JFileChooser chooser = new JFileChooser();
+			int returnValue = chooser.showOpenDialog(this);
+			File file = chooser.getSelectedFile();
+			String url = file.getAbsolutePath();
+		
+			if (file.getParent()== null || !file.getParentFile().isDirectory()) {
+				JOptionPane.showMessageDialog(this, "Se debe seleccionar un fichero (no es necesario que exista) dentro de una carpeta existente", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			else if(returnValue == JFileChooser.APPROVE_OPTION && url.toLowerCase().endsWith(".pdf")) {
+				// Si todo correcto, se crea el pdf
+				Controlador.getUnicaInstancia().exportarPdf(usuarioConChatMostrado, url);
+				JOptionPane.showMessageDialog(this, "Se ha guardado el pdf correctamente, lo encontrarás en " + url, "Información", JOptionPane.INFORMATION_MESSAGE);
+			}
+			else {
+				JOptionPane.showMessageDialog(this, "Se debe seleccionar un fichero acabado en .pdf (no es necesario que exista)", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 	}

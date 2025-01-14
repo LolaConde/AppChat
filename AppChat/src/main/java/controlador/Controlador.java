@@ -79,9 +79,37 @@ public class Controlador {
 		return usuarioActual.getDescuento();
 	}
 	
+	/**
+	 * @param telefono Número de teléfono a verificar.
+	 * @return true si <code>telefono</code> está asociado a un usuario registrado. 
+	 * false en caso contrario
+	 */
+	public boolean existeUsuario(int telefono) {
+		Optional<Usuario> optionalUsuario = repositorioUsuarios.getUsuario(telefono);
+		return optionalUsuario.isPresent();
+	}
+	
+	/**
+	 * Registra un nuevo usuario con los datos proporcionados.
+	 * 
+	 * @param nombreCompleto
+	 * @param password
+	 * @param numeroTelefono El número de teléfono. No puede estar asociado a otro usuario.
+	 * @param email
+	 * @param fechaNacimiento
+	 * @param imagenPerfil URL de la imagen de perfil del usuario.
+	 * @param saludo Saludo opcional. Si no se proporciona, <code>saludo</code> debe ser una cadena vacía.
+	 */
 	public void registrarUsuario(String nombreCompleto, String password, int numeroTelefono, String email, LocalDate fechaNacimiento,
 			String imagenPerfil, String saludo) {
-		Usuario usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, saludo, LocalDate.now());
+		Usuario usuario;
+		if(saludo.trim().isEmpty()) {
+			// Saludo por defecto
+			usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, LocalDate.now());
+		}
+		else {
+			usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, saludo, LocalDate.now());
+		}
 		adaptadorUsuario.registrarUsuario(usuario);
 		repositorioUsuarios.addUsuario(usuario);
 	}
