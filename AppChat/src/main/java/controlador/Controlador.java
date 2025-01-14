@@ -102,12 +102,14 @@ public class Controlador {
 	}
 	
 	/**
-	 * Exporta como pdf la conversación del usuario actual con <code>usuario</code>
+	 * Exporta como pdf la conversación del usuario actual con <code>usuario</code>.
+	 * 
 	 * @param usuario
+	 * @param urlArchivo La url del pdf creado
 	 */
-	public void exportarPdf(Usuario usuario) {
+	public void exportarPdf(Usuario usuario, String urlArchivo) {
 		GeneradorPDF generadorPDF = new ITextGeneradorPDF();
-		generadorPDF.nuevoPDF("./output.pdf");
+		generadorPDF.nuevoPDF(urlArchivo);
 		// Primera página
 		generadorPDF.añadirTextoNegrita("Conversación con el usuario: ");
 		generadorPDF.añadirTextoNormal(usuario.getNombre() + " (");

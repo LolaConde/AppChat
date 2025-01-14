@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
 
 import controlador.Controlador;
 import modelo.Mensaje;
@@ -20,6 +21,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+
 import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
@@ -36,6 +39,8 @@ import javax.swing.SwingUtilities;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+
 import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -108,7 +113,24 @@ public class VentanaPrincipal extends JFrame {
 		opcionAddContacto = new JMenuItem("Añadir contacto");
 		addManejadorAddContacto(opcionAddContacto);
 		opcionExportarPdf = new JMenuItem("Exportar conversación en PDF");
-		opcionExportarPdf.addActionListener(ev -> {Controlador.getUnicaInstancia().exportarPdf(usuarioConChatMostrado);});
+		opcionExportarPdf.addActionListener(ev -> {
+			// FileChooser
+			JFileChooser chooser = new JFileChooser();
+			int returnValue = chooser.showOpenDialog(this);
+			File file = chooser.getSelectedFile();
+			String url = file.getAbsolutePath();
+			// Si todo correcto, se crea el pdf
+			if (file.getParent()== null || !file.getParentFile().isDirectory()) {
+				JOptionPane.showMessageDialog(this, "Se debe seleccionar un fichero (no es necesario que exista) dentro de una carpeta existente", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			else if(returnValue == JFileChooser.APPROVE_OPTION && url.toLowerCase().endsWith(".pdf")) {
+				Controlador.getUnicaInstancia().exportarPdf(usuarioConChatMostrado, url);
+				JOptionPane.showMessageDialog(this, "Se ha guardado el pdf correctamente, lo encontrarás en " + url, "Información", JOptionPane.INFORMATION_MESSAGE);
+			}
+			else {
+				JOptionPane.showMessageDialog(this, "Se debe seleccionar un fichero acabado en .pdf (no es necesario que exista)", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			});
 		popupMenuEnChat.add(opcionAddContacto);
 		popupMenuEnChat.add(opcionExportarPdf);
 		panelDelChat.add(popupMenuEnChat);
