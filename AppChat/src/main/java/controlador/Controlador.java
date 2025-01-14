@@ -1,6 +1,7 @@
 package controlador;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import modelo.Contacto;
 import modelo.ContactoIndividual;
@@ -21,6 +23,7 @@ import modelo.DescuentoMensaje;
 import modelo.DescuentoNull;
 import modelo.GeneradorPDF;
 import modelo.GrupoDeContactos;
+import modelo.ITextGeneradorPDF;
 import modelo.Mensaje;
 import modelo.RepositorioUsuarios;
 import modelo.Usuario;
@@ -96,6 +99,55 @@ public class Controlador {
 		adaptadorUsuario.modificarUsuario(emisor);
 		adaptadorUsuario.modificarUsuario(receptor);
 		return mensaje;
+	}
+	
+	/**
+	 * Exporta como pdf la conversación del usuario actual con <code>usuario</code>
+	 * @param usuario
+	 */
+	public void exportarPdf(Usuario usuario) {
+		GeneradorPDF generadorPDF = new ITextGeneradorPDF();
+		generadorPDF.nuevoPDF("./output.pdf");
+		// Primera página
+		generadorPDF.añadirTextoNegrita("Conversación con el usuario: ");
+		generadorPDF.añadirTextoNormal(usuario.getNombre() + " (");
+		generadorPDF.añadirTextoCursiva(Integer.toString(usuario.getNumeroTelefono()));
+		generadorPDF.añadirTextoNormal(")");
+		generadorPDF.finalizarParrafo();
+		generadorPDF.siguientePagina();
+		
+		// Conversación
+		usuarioActual.getConversacion(usuario).stream().forEach(m -> addMensaje(m, generadorPDF));
+		generadorPDF.finalizarParrafo();
+		generadorPDF.finalizarPDF();
+	}
+	
+	/** Añade los datos de <code>mensaje</code> al pdf que se está creando en <code>generadorPDF</code>
+	 * 
+	 * @param mensaje
+	 * @param generadorPDF
+	 */
+	private void addMensaje(Mensaje mensaje, GeneradorPDF generadorPDF) {
+		generadorPDF.añadirTextoNegrita("Emisor: ");
+		generadorPDF.añadirTextoCursiva(mensaje.getEmisor().getNombre());
+		generadorPDF.finalizarParrafo();
+		generadorPDF.añadirTextoNegrita("Fecha: ");
+		generadorPDF.añadirTextoCursiva(mensaje.getFechaYHora().toString());
+		generadorPDF.finalizarParrafo();
+		if(mensaje.isMensajeDeTexto()) {
+			generadorPDF.añadirTextoNegrita("Texto: ");
+			generadorPDF.añadirTextoCursiva(mensaje.getTexto().orElse(""));
+		}
+		else {
+			generadorPDF.añadirTextoNegrita("Emoticono: ");
+			ImageIcon imageIcon = BubbleText.getEmoji(mensaje.getEmoticono().get());
+			BufferedImage imagen = (BufferedImage) imageIcon.getImage();
+			generadorPDF.añadirImagen(imagen);
+		}
+		generadorPDF.finalizarParrafo();
+		generadorPDF.añadirTextoNormal("------------------");
+		generadorPDF.finalizarParrafo();
+		generadorPDF.finalizarParrafo();
 	}
 	
 	/**

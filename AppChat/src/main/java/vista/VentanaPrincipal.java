@@ -56,9 +56,11 @@ public class VentanaPrincipal extends JFrame {
 	private static final int TAMANO_LETRA_MENSAJES = 14;
 	private JTextField textField;
 	private JList<Mensaje> lista;
-	private JPopupMenu popupMenuAddContacto;
+	private JPopupMenu popupMenuEnChat;
 	private DefaultListModel<Mensaje> modelo;
 	private Usuario usuarioConChatMostrado = null;
+	JMenuItem opcionAddContacto;
+	JMenuItem opcionExportarPdf;
 	
 	/**
 	 * Crea la ventana
@@ -101,19 +103,28 @@ public class VentanaPrincipal extends JFrame {
 		panelDelChat.setSize(400,700);
 		scrollPane.setViewportView(panelDelChat);
 		
-		// PopupMenu: Añadir contacto
-		popupMenuAddContacto = new JPopupMenu();
-		JMenuItem opcionAddContacto = new JMenuItem("Añadir contacto");
+		// PopupMenu: Añadir contacto / Exportar conversación pdf
+		popupMenuEnChat = new JPopupMenu();
+		opcionAddContacto = new JMenuItem("Añadir contacto");
 		addManejadorAddContacto(opcionAddContacto);
-		popupMenuAddContacto.add(opcionAddContacto);
-		panelDelChat.add(popupMenuAddContacto);
+		opcionExportarPdf = new JMenuItem("Exportar conversación en PDF");
+		opcionExportarPdf.addActionListener(ev -> {Controlador.getUnicaInstancia().exportarPdf(usuarioConChatMostrado);});
+		popupMenuEnChat.add(opcionAddContacto);
+		popupMenuEnChat.add(opcionExportarPdf);
+		panelDelChat.add(popupMenuEnChat);
 		
 		panelDelChat.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// Sólo si el usuario no está agregado
-				if(SwingUtilities.isRightMouseButton(e) && usuarioConChatMostrado != null && !Controlador.getUnicaInstancia().getNombreDeContacto(usuarioConChatMostrado).isPresent())
-					popupMenuAddContacto.show(panelDelChat, e.getX(), e.getY());
+				if (SwingUtilities.isRightMouseButton(e) && usuarioConChatMostrado != null) {
+					boolean usuarioNoAgregado = !Controlador.getUnicaInstancia().getNombreDeContacto(usuarioConChatMostrado).isPresent();
+					boolean premium = Controlador.getUnicaInstancia().isUsuarioActualPremium();
+					if(usuarioNoAgregado || premium) {
+						opcionAddContacto.setVisible(usuarioNoAgregado);
+						opcionExportarPdf.setVisible(premium);
+						popupMenuEnChat.show(panelDelChat, e.getX(), e.getY());
+					}
+				}
 			}
 		});
 		

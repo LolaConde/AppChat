@@ -245,6 +245,18 @@ public class Usuario {
     			.collect(Collectors.toList());
     }
     
+    /**
+     * @param usuario
+     * @return Lista con los mensajes ordenados por fecha que el usuario ha intercambiado con <code>usuario</code>
+     */
+    public List<Mensaje> getConversacion(Usuario usuario){
+    	return Stream.of(mensajesEnviados, mensajesRecibidos)
+    			.flatMap(listaMensajes -> listaMensajes.stream())
+    			.filter(m -> m.isEmisor(usuario) || m.isReceptor(usuario))
+    			.sorted((m1, m2) -> m1.getFechaYHora().compareTo(m2.getFechaYHora()))
+    			.collect(Collectors.toList());
+    }
+    
     public void setPremium(boolean b) {
     	isPremium = b;
     }
