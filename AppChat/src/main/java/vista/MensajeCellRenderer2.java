@@ -2,24 +2,19 @@ package vista;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.Optional;
 
 import javax.swing.BoxLayout;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
 
 import controlador.Controlador;
 import modelo.Mensaje;
-import modelo.Usuario;
 import tds.BubbleText;
 
 public class MensajeCellRenderer2 extends JPanel 
@@ -71,11 +66,11 @@ implements ListCellRenderer<Mensaje> {
 		// Emisor y receptor
 		if (Controlador.getUnicaInstancia().isUsuarioActualEmisor(mensaje)) {
 			lblEmisor.setText("tú");
-			lblReceptor.setText(getNombreDeContactoOTelefono(mensaje.getReceptor()));
+			lblReceptor.setText(FuncionesVentanas.getNombreDeContactoOTelefono(mensaje.getReceptor()));
 		}
 		else {
 			lblReceptor.setText("tú");
-			lblEmisor.setText(getNombreDeContactoOTelefono(mensaje.getEmisor()));
+			lblEmisor.setText(FuncionesVentanas.getNombreDeContactoOTelefono(mensaje.getEmisor()));
 		}
 		// Mensaje
 		panelMensaje.removeAll();
@@ -96,15 +91,6 @@ implements ListCellRenderer<Mensaje> {
 					TAMANO_MENSAJE));
 		}
 		return this;
-	}
-	
-	private String getNombreDeContactoOTelefono(Usuario usuario) {
-		Optional<String> optionalNombreContacto = Controlador.getUnicaInstancia().getNombreDeContacto(usuario);
-		if(optionalNombreContacto.isPresent()) {
-			return optionalNombreContacto.get();
-		}else {
-			return Integer.toString(usuario.getNumeroTelefono());
-		}
 	}
 
 }

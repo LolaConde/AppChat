@@ -8,7 +8,6 @@ import javax.swing.ListCellRenderer;
 
 import controlador.Controlador;
 import modelo.Mensaje;
-import modelo.Usuario;
 import tds.BubbleText;
 
 import java.awt.GridBagLayout;
@@ -102,10 +101,10 @@ public class MensajeCellRenderer4 extends JPanel implements ListCellRenderer<Men
 		// Emisor y receptor
 		if (Controlador.getUnicaInstancia().isUsuarioActualEmisor(mensaje)) {
             lblEmisor.setText("Tu");
-            lblReceptor.setText(getNombreDeContactoOTelefono(mensaje.getReceptor()));
+            lblReceptor.setText(FuncionesVentanas.getNombreDeContactoOTelefono(mensaje.getReceptor()));
         } else {
             lblReceptor.setText("Tu");
-            lblEmisor.setText(getNombreDeContactoOTelefono(mensaje.getEmisor()));
+            lblEmisor.setText(FuncionesVentanas.getNombreDeContactoOTelefono(mensaje.getEmisor()));
         }
 		if(mensaje.getEmoticono().isPresent()) {
 			// Emoticono
@@ -121,10 +120,5 @@ public class MensajeCellRenderer4 extends JPanel implements ListCellRenderer<Men
 		}
 		return this;
 	}
-	
-	private String getNombreDeContactoOTelefono(Usuario usuario) {
-        return Controlador.getUnicaInstancia().getNombreDeContacto(usuario)
-                .orElse(Integer.toString(usuario.getNumeroTelefono()));
-    }
 
 }

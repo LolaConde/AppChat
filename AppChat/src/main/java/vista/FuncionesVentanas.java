@@ -2,7 +2,11 @@ package vista;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
+
+import controlador.Controlador;
+import modelo.Usuario;
 
 public class FuncionesVentanas {
 	
@@ -93,5 +97,15 @@ public class FuncionesVentanas {
 			
 		});
 		return mostrar;
+	}
+	
+	/**
+	 * @param usuario
+	 * @return Nombre de contacto de <code>usuario</code> si el usuario actual lo tiene agregado. 
+	 * Número de teléfono de <code>usuario</code> en caso contrario.
+	 */
+	public static String getNombreDeContactoOTelefono(Usuario usuario) {
+		return Controlador.getUnicaInstancia().getNombreDeContacto(usuario)
+        .orElse(Integer.toString(usuario.getNumeroTelefono()));
 	}
 }

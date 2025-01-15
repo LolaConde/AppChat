@@ -1,8 +1,9 @@
 package vista;
 
-import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Image;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -10,7 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
 
 import controlador.Controlador;
 import modelo.Mensaje;
@@ -58,12 +58,13 @@ public class VentanaPrincipal extends JFrame {
 	JPanel panelCentral;
 	JLabel lblImagen;
 	JScrollPane scrollPane;
-	private static final int TAMANO_LETRA_MENSAJES = 14;
+	private static final int TAMANO_LETRA_MENSAJES = 12;
 	private JTextField textField;
 	private JList<Mensaje> lista;
 	private JPopupMenu popupMenuEnChat;
 	private DefaultListModel<Mensaje> modelo;
 	private Usuario usuarioConChatMostrado = null;
+	private Mensaje ultimoMensajeChatMostrado = null;
 	JMenuItem opcionAddContacto;
 	JMenuItem opcionExportarPdf;
 	
@@ -102,6 +103,8 @@ public class VentanaPrincipal extends JFrame {
 		// Mensajes del chat actual
 		scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
 		
 		panelDelChat = new JPanel();
 		panelDelChat.setLayout(new BoxLayout(panelDelChat, BoxLayout.Y_AXIS));
@@ -350,22 +353,39 @@ public class VentanaPrincipal extends JFrame {
 	 * @param mensaje
 	 */
 	private void mostrarMensaje(Mensaje mensaje) {
+		boolean mensajeEnviado = Controlador.getUnicaInstancia().isUsuarioActualEmisor(mensaje);
+		// Primer mensaje o distinto día al anterior mensaje -> Día
+		if(ultimoMensajeChatMostrado == null || !ultimoMensajeChatMostrado.getFechaYHora().toLocalDate().isEqual(mensaje.getFechaYHora().toLocalDate())) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			JLabel label = new JLabel(mensaje.getFechaYHora().format(formatter));
+			label.setAlignmentX(Component.CENTER_ALIGNMENT);
+			label.setFont(new Font("Tahoma", Font.BOLD, 12));
+			panelDelChat.add(label);
+		}
+		// Hora + emisor
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+		String hora = " (" + mensaje.getFechaYHora().format(formatter) + ")";
+		String emisor = mensajeEnviado ? "Tu" : FuncionesVentanas.getNombreDeContactoOTelefono(mensaje.getEmisor());
+		
+		// Mensaje
 		if(mensaje.getEmoticono().isPresent()) {
 			panelDelChat.add(new BubbleText(panelDelChat,
 					mensaje.getEmoticono().get().intValue(),
-					Controlador.getUnicaInstancia().isUsuarioActualEmisor(mensaje) ? Color.LIGHT_GRAY : Color.PINK,
-					"", 
-					Controlador.getUnicaInstancia().isUsuarioActualEmisor(mensaje) ? BubbleText.SENT : BubbleText.RECEIVED,
+					mensajeEnviado ? Color.LIGHT_GRAY : Color.PINK,
+					emisor + hora, 
+					mensajeEnviado ? BubbleText.SENT : BubbleText.RECEIVED,
 					TAMANO_LETRA_MENSAJES));
 		}
 		else {
 			panelDelChat.add(new BubbleText(panelDelChat,
 					mensaje.getTexto().orElse(""),
-					Controlador.getUnicaInstancia().isUsuarioActualEmisor(mensaje) ? Color.LIGHT_GRAY : Color.PINK,
-					"", 
-					Controlador.getUnicaInstancia().isUsuarioActualEmisor(mensaje) ? BubbleText.SENT : BubbleText.RECEIVED,
+					mensajeEnviado ? Color.LIGHT_GRAY : Color.PINK,
+					emisor + hora,
+					mensajeEnviado ? BubbleText.SENT : BubbleText.RECEIVED,
 					TAMANO_LETRA_MENSAJES));
 		}
+		ultimoMensajeChatMostrado = mensaje;
+		
 	}
 	
 	/**
@@ -395,6 +415,7 @@ public class VentanaPrincipal extends JFrame {
 	private void addManejadorMostrarMensajesDeChat() {
 		lista.addListSelectionListener(ev -> {
         	if(lista.getSelectedValue() != null) {
+        		ultimoMensajeChatMostrado = null;
         		textField.setVisible(true); // No se muestra el textField hasta que no se selecciona un chat
         		
         		panelDelChat.removeAll();
@@ -415,6 +436,7 @@ public class VentanaPrincipal extends JFrame {
         	else {
         		textField.setVisible(false);
         		usuarioConChatMostrado = null;
+        		ultimoMensajeChatMostrado = null;
         	}
         });
 	}
