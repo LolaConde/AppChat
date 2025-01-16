@@ -240,6 +240,17 @@ public class Controlador {
 	}
 	
 	/**
+	 * Añade el contacto individual <code>contacto</code> al grupo <code>grupo</code>, y lo guarda en la
+	 * base de datos.
+	 * @param contacto
+	 * @param grupo
+	 */
+	public void addContactoAGrupo(ContactoIndividual contacto, GrupoDeContactos grupo) {
+		grupo.addContacto(contacto);
+		adaptadorContacto.modificarContacto(grupo);
+	}
+	
+	/**
 	 * Registra un nuevo mensaje enviado por el usuario actual al usuario con el que se intercambió el mensaje <code>m</code>, y lo guarda en la base de datos.
 	 * @param m
 	 * @param texto El texto del nuevo mensaje

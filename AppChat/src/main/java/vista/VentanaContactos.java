@@ -23,6 +23,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import java.awt.GridLayout;
 
 public class VentanaContactos extends JFrame {
 
@@ -31,6 +32,7 @@ public class VentanaContactos extends JFrame {
 	private JList<Contacto> listaTodosContactos;
 	private DefaultListModel<Contacto> modeloContactosDeGrupo;
 	private JList<Contacto> listaContactosDeGrupo;
+	private JPanel panelContactosDeGrupo;
 
 	/**
 	 * Create the frame.
@@ -64,11 +66,24 @@ public class VentanaContactos extends JFrame {
 		panelTodosLosContactos.add(scrollTodosLosContactos, BorderLayout.CENTER);
 		
 		// Panel con los contactos de un grupo
-		JPanel panelContactosDeGrupo = new JPanel();
+		panelContactosDeGrupo = new JPanel();
+		panelContactosDeGrupo.setLayout(new BorderLayout(0, 0));
 		panelMostrarContactos.add(panelContactosDeGrupo);
 		crearListaDeContactosVacia();
-		panelContactosDeGrupo.add(listaContactosDeGrupo);
+		JScrollPane scrollContactosDeGrupo = new JScrollPane(listaContactosDeGrupo);
+		scrollContactosDeGrupo.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		panelContactosDeGrupo.add(scrollContactosDeGrupo, BorderLayout.CENTER);
 		
+		// Botón añadir contacto a grupo
+		JButton btnAddContactoAGrupo = new JButton("Añadir contacto al grupo");
+		btnAddContactoAGrupo.setBackground(FuncionesVentanas.COLOR_ROSA);
+		btnAddContactoAGrupo.addActionListener(ev -> {
+			// Si se ha pulsado -> Está visible
+			// Si está visible -> Se había seleccionado un grupo
+			FuncionesVentanas.irAVentana(this, new PanelAddContactoAGrupo((GrupoDeContactos) listaTodosContactos.getSelectedValue()));
+		});
+		panelContactosDeGrupo.add(btnAddContactoAGrupo, BorderLayout.NORTH);
+		panelContactosDeGrupo.setVisible(false);
 		addManejadorMostrarContactosDeGrupo();
 		
 		return panelMostrarContactos;
@@ -113,7 +128,11 @@ public class VentanaContactos extends JFrame {
         	if(contactoSeleccionado != null && contactoSeleccionado instanceof GrupoDeContactos) {
     			List<ContactoIndividual> contactosAMostrar = ((GrupoDeContactos) contactoSeleccionado).getContactos();
     			contactosAMostrar.stream().forEach(modeloContactosDeGrupo::addElement);
+    			panelContactosDeGrupo.setVisible(true);
     		}
+        	else {
+        		panelContactosDeGrupo.setVisible(false);
+        	}
     		listaContactosDeGrupo.revalidate();
 			listaContactosDeGrupo.repaint();
 			

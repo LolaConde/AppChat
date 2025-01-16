@@ -24,6 +24,22 @@ public class GrupoDeContactos extends Contacto{
 	}
 	
 	/**
+	 * @param contacto
+	 * @return true si <code>contacto</code> forma parte del grupo. false en caso contrario.
+	 */
+	public boolean contiene(ContactoIndividual contacto) {
+		return contactos.contains(contacto);
+	}
+	
+	/**
+	 * Añade el contacto <code>contacto</code> al grupo
+	 * @param contacto
+	 */
+	public void addContacto(ContactoIndividual contacto) {
+		contactos.add(contacto);
+	}
+	
+	/**
 	 * @return la URL de la imagen del grupo, o una cadena vacía si no tiene imagen.
 	 */
 	public String getImagen() {
