@@ -185,12 +185,17 @@ public class VentanaLogin {
 	
 	private void addManejadorHacerLogin(JButton button) {
 		button.addActionListener(ev -> {
-			int telf = Integer.parseInt(this.telfTxtField.getText());
-			String passw = new String(this.passwordField.getPassword());
-			if(Controlador.getUnicaInstancia().login(telf, passw)) {
-				FuncionesVentanas.irAVentana(frame, new VentanaPrincipal());
-			} else {
-				JOptionPane.showMessageDialog(frame, "Error de login");
+			if(this.telfTxtField.getText().equals("") || passwordField.getPassword().length == 0) {
+				JOptionPane.showMessageDialog(frame, "Debes introducir el teléfono y la contraseña");
+			}
+			else {
+				int telf = Integer.parseInt(this.telfTxtField.getText());
+				String passw = new String(this.passwordField.getPassword());
+				if(Controlador.getUnicaInstancia().login(telf, passw)) {
+					FuncionesVentanas.irAVentana(frame, new VentanaPrincipal());
+				} else {
+					JOptionPane.showMessageDialog(frame, "Error de login");
+				}
 			}
 		});
 	}

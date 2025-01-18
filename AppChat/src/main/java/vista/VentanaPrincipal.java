@@ -297,6 +297,8 @@ public class VentanaPrincipal extends JFrame {
 		JButton btnConsultarEmoticonos = new JButton("Consulta los emoticonos");
 		btnConsultarEmoticonos.addActionListener(ev -> {
 			new VentanaElegirEmoticono();
+			this.revalidate();
+			this.repaint();
 		});
 		btnConsultarEmoticonos.setBackground(FuncionesVentanas.COLOR_ROSA);
 		botonera.add(btnConsultarEmoticonos);

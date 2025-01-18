@@ -25,6 +25,8 @@ public class VentanaPremium extends JFrame {
 	 * Create the frame.
 	 */
 	public VentanaPremium() {
+		FuncionesVentanas.addIcon(this);
+		setTitle("AppChat");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
