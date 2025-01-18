@@ -14,8 +14,8 @@ public class Usuario {
     private String password;
     private int numeroTelefono;
     private String email;
-    private LocalDate fechaNacimiento;
-    private String imagenPerfil; // URL de la imagen
+    private LocalDate fechaNacimiento; // Opcional, puede ser null
+    private String imagenPerfil; // URL de la imagen. Opcional, puede ser null
     private String saludo;
     private static final String SALUDO_POR_DEFECTO = "Hi there! I'm using AppChat";
     
@@ -31,14 +31,13 @@ public class Usuario {
 	private int codigo;
     
     // Constructor
-    public Usuario(String nombreCompleto, String password, int numeroTelefono, String email, LocalDate fechaNacimiento,
-			String imagenPerfil, String saludo, LocalDate fechaRegistro) {
+    public Usuario(String nombreCompleto, String password, int numeroTelefono, String email, String saludo, LocalDate fechaRegistro) {
 		this.nombreCompleto = nombreCompleto;
 		this.password = password;
 		this.numeroTelefono = numeroTelefono;
 		this.email = email;
-		this.fechaNacimiento = fechaNacimiento;
-		this.imagenPerfil = imagenPerfil;
+		this.fechaNacimiento = null;
+		this.imagenPerfil = null;
 		this.saludo = saludo;
 		this.mensajesEnviados = new ArrayList<Mensaje>();
 		this.mensajesRecibidos = new ArrayList<Mensaje>();
@@ -51,9 +50,9 @@ public class Usuario {
     
     // Constructor: sin saludo
     // Para registrarse en el sistema, un usuario debe indicar ... y un mensaje de saludo opcional
-    public Usuario(String nombreCompleto, String password, int numeroTelefono, String email, LocalDate fechaNacimiento,
-			String imagenPerfil, LocalDate fechaRegistro) {
-    	this(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, SALUDO_POR_DEFECTO, fechaRegistro);
+    public Usuario(String nombreCompleto, String password, int numeroTelefono, String email,
+			LocalDate fechaRegistro) {
+    	this(nombreCompleto, password, numeroTelefono, email, SALUDO_POR_DEFECTO, fechaRegistro);
     }
     
     public void setCodigo(int codigo) {
@@ -80,8 +79,15 @@ public class Usuario {
     	this.imagenPerfil = imagen;
     }
     
+    public void setFechaNacimiento(LocalDate fecha) {
+    	this.fechaNacimiento = fecha;
+    }
+    
+    /**
+	 * @return la URL de la imagen de perfil del usuario, o una cadena vacía si no tiene imagen.
+	 */
     public String getImagenPerfil() {
-    	return this.imagenPerfil;
+    	return this.imagenPerfil == null ? "" : this.imagenPerfil;
     }
     public Optional<String> getNombreContacto(Usuario usuario) {
     	for (Contacto c : contactos) {
@@ -105,8 +111,8 @@ public class Usuario {
     	return this.email;
     }
     
-    public LocalDate getFechaNacimiento() {
-    	return this.fechaNacimiento;
+    public Optional<LocalDate> getFechaNacimiento() {
+    	return Optional.ofNullable(this.fechaNacimiento);
     }
     
     public String getSaludo() {

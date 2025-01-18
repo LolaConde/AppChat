@@ -21,6 +21,7 @@ import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
@@ -109,7 +110,10 @@ public class VentanaRegistro extends JFrame {
 		button.addActionListener(ev -> {
 			Boolean datosCorrectos = comprobarDatosIntroducidos();
 			if (datosCorrectos) {
-				Controlador.getUnicaInstancia().registrarUsuario(nombreTxtField.getText() + " " + apellidosTxtField.getText(), new String(passwordField1.getPassword()), Integer.parseInt(telefonoTxtField.getText()), "", fechaNacimientoDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), imagenTxtField.getText(), saludoField.getText());
+				// Obtiene la fecha de nacimiento si se ha introducido, o null si no es así.
+				Date fecha = fechaNacimientoDateChooser.getDate();
+				LocalDate fechaNacimiento = fecha != null? fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
+				Controlador.getUnicaInstancia().registrarUsuario(nombreTxtField.getText() + " " + apellidosTxtField.getText(), new String(passwordField1.getPassword()), Integer.parseInt(telefonoTxtField.getText()), "", fechaNacimiento, imagenTxtField.getText(), saludoField.getText());
 				JOptionPane.showMessageDialog(contentPane, "Usuario registrado correctamente", "Registro correcto", JOptionPane.PLAIN_MESSAGE);
 				// Ir al login
 				VentanaLogin ventanaLogin = new VentanaLogin();
@@ -187,7 +191,7 @@ public class VentanaRegistro extends JFrame {
 		telefonoTxtField.setColumns(10);
 		
 		// Fecha de nacimiento
-		txtFechaNacimiento = new JLabel("Fecha de nacimiento:");
+		txtFechaNacimiento = new JLabel("Fecha de nacimiento (opcional):");
 		GridBagConstraints gbc_txtFechaNacimiento = new GridBagConstraints();
 		gbc_txtFechaNacimiento.anchor = GridBagConstraints.EAST;
 		gbc_txtFechaNacimiento.insets = new Insets(0, 0, 5, 5);
@@ -269,7 +273,7 @@ public class VentanaRegistro extends JFrame {
 		panelDatos.add(textAreaConScrollSaludo(), gbc_scrollPaneSaludo);
 		
 		// Url de imagen de perfil
-		txtImagen = new JLabel("Imagen:");
+		txtImagen = new JLabel("Imagen (opcional):");
 		GridBagConstraints gbc_txtImagen = new GridBagConstraints();
 		gbc_txtImagen.anchor = GridBagConstraints.NORTHEAST;
 		gbc_txtImagen.insets = new Insets(0, 0, 5, 5);
@@ -349,10 +353,10 @@ public class VentanaRegistro extends JFrame {
 			datosCorrectos = false;
 		}
 		Date hoy = new Date();
-		if(fechaNacimientoDateChooser.getDate() == null || fechaNacimientoDateChooser.getDate().after(hoy)) {
+		if(fechaNacimientoDateChooser.getDate() != null && fechaNacimientoDateChooser.getDate().after(hoy)) {
 			txtFechaNacimiento.setForeground(Color.RED);
 			datosCorrectos = false;
-			explicacionDeErrores += "La fecha de nacimiento debe contener una fecha anterior a hoy" + '\n';
+			explicacionDeErrores += "La fecha de nacimiento no puede contener una fecha posterior a hoy" + '\n';
 		}
 		if(!Arrays.equals(passwordField1.getPassword(), passwordField2.getPassword())) {
 			txtPass1.setForeground(Color.RED);
@@ -371,17 +375,20 @@ public class VentanaRegistro extends JFrame {
 			explicacionDeErrores += "El campo de la contraseña 2 está vacío: La contraseña no puede estar vacía" + '\n';
 		}
 		
-		URL url = null;
-		try {
-			url = new URL(imagenTxtField.getText());
-			BufferedImage image = ImageIO.read(url);
-			ImageIcon imageIcon = new ImageIcon(image);
-			
-		} catch (Exception e) {
-			txtImagen.setForeground(Color.RED);
-			datosCorrectos = false;
-			explicacionDeErrores += "La url de la imagen debe hacer referencia a una imagen existente" + '\n';
+		if (!imagenTxtField.getText().isEmpty()) { //Puede ser vacío. Sólo se comprueba si no lo es
+			URL url = null;
+			try {
+				url = new URL(imagenTxtField.getText());
+				BufferedImage image = ImageIO.read(url);
+				ImageIcon imageIcon = new ImageIcon(image);
+				
+			} catch (Exception e) {
+				txtImagen.setForeground(Color.RED);
+				datosCorrectos = false;
+				explicacionDeErrores += "La url de la imagen debe hacer referencia a una imagen existente" + '\n';
+			}
 		}
+
 		if (!datosCorrectos) {
 			JOptionPane.showMessageDialog(contentPane, explicacionDeErrores, "Campos erroneos", JOptionPane.ERROR_MESSAGE);
 		}

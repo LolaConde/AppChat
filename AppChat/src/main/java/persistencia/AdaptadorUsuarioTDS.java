@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 import modelo.Contacto;
@@ -55,6 +56,12 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		adaptadorDescuento.registrarDescuento(usuario.getDescuento());
 		
 		// Crear entidad Cliente
+		
+		String fechaNacimiento = "";
+		if (usuario.getFechaNacimiento().isPresent()) {
+			fechaNacimiento = usuario.getFechaNacimiento().get().toString();
+		}
+		
 		eUsuario = new Entidad();
 		eUsuario.setNombre("usuario");
 		eUsuario.setPropiedades(new ArrayList<Propiedad>(
@@ -62,7 +69,7 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 						new Propiedad("numeroTelefono", Integer.toString(usuario.getNumeroTelefono())),
 						new Propiedad("password", usuario.getPassword()),
 						new Propiedad("email", usuario.getEmail()),
-						new Propiedad("fechaNacimiento", usuario.getFechaNacimiento().toString()),
+						new Propiedad("fechaNacimiento", fechaNacimiento),
 						new Propiedad("imagenPerfil", usuario.getImagenPerfil()),
 						new Propiedad("saludo", usuario.getSaludo()),
 						new Propiedad("isPremium", usuario.isPremium() ? "true" : "false"),
@@ -103,15 +110,21 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		int numeroTelefono = Integer.parseInt(servPersistencia.recuperarPropiedadEntidad(eUsuario, "numeroTelefono"));
 		String password = servPersistencia.recuperarPropiedadEntidad(eUsuario, "password");
 		String email = servPersistencia.recuperarPropiedadEntidad(eUsuario, "email");
-		LocalDate fechaNacimiento = LocalDate.parse(servPersistencia.recuperarPropiedadEntidad(eUsuario, "fechaNacimiento"));
+		String fechaNacimientoOptional = servPersistencia.recuperarPropiedadEntidad(eUsuario, "fechaNacimiento");
 		String imagenPerfil = servPersistencia.recuperarPropiedadEntidad(eUsuario, "imagenPerfil");
 		String saludo = servPersistencia.recuperarPropiedadEntidad(eUsuario, "saludo");
 		Boolean isPremium = servPersistencia.recuperarPropiedadEntidad(eUsuario, "isPremium").equals("true");
 		LocalDate fechaRegistro = LocalDate.parse(servPersistencia.recuperarPropiedadEntidad(eUsuario, "fechaRegistro"));
 		
-		Usuario usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, saludo, fechaRegistro);
+		Usuario usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, saludo, fechaRegistro);
 		usuario.setPremium(isPremium);
 		usuario.setCodigo(codigo);
+		if(!fechaNacimientoOptional.isEmpty()) {
+			usuario.setFechaNacimiento(LocalDate.parse(fechaNacimientoOptional));
+		}
+		if(!imagenPerfil.isEmpty()) {
+			usuario.setImagenPerfil(imagenPerfil);
+		}
 		
 		// Añade usuario al pool
 		PoolDAO.getUnicaInstancia().addObjeto(codigo, usuario);
@@ -187,7 +200,12 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 				prop.setValor(usuario.getEmail());
 			}
 			else if(prop.getNombre().equals("fechaNacimiento")) {
-				prop.setValor(usuario.getFechaNacimiento().toString());
+				if (usuario.getFechaNacimiento().isPresent()) {
+					prop.setValor(usuario.getFechaNacimiento().get().toString());
+				}
+				else {
+					prop.setValor("");
+				}
 			}
 			else if(prop.getNombre().equals("imagenPerfil")) {
 				prop.setValor(usuario.getImagenPerfil());

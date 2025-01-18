@@ -98,8 +98,8 @@ public class Controlador {
 	 * @param password
 	 * @param numeroTelefono El número de teléfono. No puede estar asociado a otro usuario.
 	 * @param email
-	 * @param fechaNacimiento
-	 * @param imagenPerfil URL de la imagen de perfil del usuario.
+	 * @param fechaNacimiento Es opcional. Si no se proporciona, debe ser null
+	 * @param imagenPerfil URL de la imagen de perfil del usuario. Es opcional. Si no se proporciona, debe ser una cadena vacía.
 	 * @param saludo Saludo opcional. Si no se proporciona, <code>saludo</code> debe ser una cadena vacía.
 	 */
 	public void registrarUsuario(String nombreCompleto, String password, int numeroTelefono, String email, LocalDate fechaNacimiento,
@@ -107,10 +107,16 @@ public class Controlador {
 		Usuario usuario;
 		if(saludo.trim().isEmpty()) {
 			// Saludo por defecto
-			usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, LocalDate.now());
+			usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, LocalDate.now());
 		}
 		else {
-			usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, fechaNacimiento, imagenPerfil, saludo, LocalDate.now());
+			usuario = new Usuario(nombreCompleto, password, numeroTelefono, email, saludo, LocalDate.now());
+		}
+		if (fechaNacimiento != null) {
+			usuario.setFechaNacimiento(fechaNacimiento);
+		}
+		if(! imagenPerfil.isEmpty()) {
+			usuario.setImagenPerfil(imagenPerfil);
 		}
 		adaptadorUsuario.registrarUsuario(usuario);
 		repositorioUsuarios.addUsuario(usuario);
