@@ -35,6 +35,7 @@ import javax.swing.ImageIcon;
 
 import tds.BubbleText;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
 import java.awt.event.MouseAdapter;
@@ -54,6 +55,7 @@ public class VentanaPrincipal extends JFrame {
 	private static final ImageIcon ICONO_ENVIAR_MENSAJE = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/enviar.png"));
 	private static final ImageIcon ICONO_BUSCAR_MENSAJES = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/buscar.png"));
 	private static final ImageIcon ICONO_AGENDA_CONTACTOS = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/agenda.png"));
+	private static final ImageIcon ICONO_EMOTICONOS = new ImageIcon(VentanaPrincipal.class.getResource("/vista/imagenes/emoticonos.png"));
 	JPanel panelDelChat;
 	JPanel panelCentral;
 	JLabel lblImagen;
@@ -67,6 +69,7 @@ public class VentanaPrincipal extends JFrame {
 	private Mensaje ultimoMensajeChatMostrado = null;
 	JMenuItem opcionAddContacto;
 	JMenuItem opcionExportarPdf;
+	private JPanel panelEnviarMensaje;
 	
 	/**
 	 * Crea la ventana
@@ -93,12 +96,34 @@ public class VentanaPrincipal extends JFrame {
 		panelCentral = new JPanel();
 		panelCentral.setLayout(new BorderLayout(0, 0));
 		
-		// Escribir mensaje
+		// Escribir mensaje/emoticonos
+		panelEnviarMensaje = new JPanel();
+		panelEnviarMensaje.setVisible(false); // No se muestra hasta que no se selecciona un chat
+		panelEnviarMensaje.setLayout(new BoxLayout(panelEnviarMensaje, BoxLayout.Y_AXIS));
+		panelCentral.add(panelEnviarMensaje, BorderLayout.SOUTH);
+		
+		JPanel panelEscribirMensaje = new JPanel();
+		panelEscribirMensaje.setLayout(new BoxLayout(panelEscribirMensaje, BoxLayout.X_AXIS));
+		panelEnviarMensaje.add(panelEscribirMensaje);
+		
 		textField = new JTextField();
 		addManejadorEnviarMensaje();
 		textField.setColumns(10);
-		textField.setVisible(false); // No se muestra hasta que no se selecciona un chat
-		panelCentral.add(textField, BorderLayout.SOUTH);
+		panelEscribirMensaje.add(textField);
+		
+		JButton btnMostrarEmoticonos = new JButton("");
+		btnMostrarEmoticonos.setIcon(ICONO_EMOTICONOS);
+		btnMostrarEmoticonos.setBackground(FuncionesVentanas.COLOR_ROSA);
+		panelEscribirMensaje.add(btnMostrarEmoticonos);
+		
+		JScrollPane scrollPaneEmoticonos = scrollPaneEmoticonos();
+		panelEnviarMensaje.add(scrollPaneEmoticonos);
+		
+		btnMostrarEmoticonos.addActionListener(ev -> {
+			scrollPaneEmoticonos.setVisible(!scrollPaneEmoticonos.isVisible());
+			panelCentral.revalidate();
+			panelCentral.repaint();
+		});
 		
 		// Mensajes del chat actual
 		scrollPane = new JScrollPane();
@@ -141,6 +166,63 @@ public class VentanaPrincipal extends JFrame {
 	}
 	
 	/**
+	 * Si hay un chat seleccionado, se envía el mensaje <code>mensaje</code> a este, se muestra en 
+	 * el chat actual (<code>panelDelChat</code>), y se actualiza <code>lista</code> mostrando 
+	 * el mensaje enviado como el último del chat.
+	 */
+	
+	private void enviarMensajeAlChatActual(String mensaje) {
+		if(lista.getSelectedValue() != null) {
+			Mensaje ultimoMensajeAnterior = lista.getSelectedValue();
+			Mensaje ultimoMensaje = Controlador.getUnicaInstancia().enviarMensaje(ultimoMensajeAnterior, mensaje);
+			
+			mostrarMensaje(ultimoMensaje);
+			SwingUtilities.invokeLater(() -> {
+		        JScrollBar vertical = scrollPane.getVerticalScrollBar();
+		        vertical.setValue(vertical.getMaximum());
+		    });
+			
+			modelo.removeElement(ultimoMensajeAnterior);
+			modelo.add(0,ultimoMensaje);
+			lista.setSelectedIndex(0);
+			lista.revalidate();
+			lista.repaint();
+		}
+	}
+	
+	/**
+	 * @return Un scrollPane que muestra una serie de emoticonos, de tal forma que si se selecciona
+	 * uno, se envía al chat actual.
+	 */
+	private JScrollPane scrollPaneEmoticonos() {
+		// Lista de emoticonos
+		DefaultListModel<Integer> modeloEmoticonos = new DefaultListModel<Integer>();
+		for(int i=0; i<BubbleText.MAXICONO; i++) {
+			modeloEmoticonos.addElement(i);
+		}
+		JList<Integer> listaEmoticonos = new JList<Integer>(modeloEmoticonos);
+		listaEmoticonos.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		listaEmoticonos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listaEmoticonos.setBackground(new Color(238, 238, 238));
+		listaEmoticonos.setCellRenderer(new EmoticonoCellRenderer2());
+		listaEmoticonos.setVisibleRowCount(-1);
+		
+		listaEmoticonos.addListSelectionListener(
+				ev -> {
+					if(!ev.getValueIsAdjusting()) {
+						enviarMensajeAlChatActual(":"+listaEmoticonos.getSelectedValue());
+					}
+				}
+		);
+		
+		// Scroll para la lista de emoticonos
+		JScrollPane scrollPaneEmoticonos = new JScrollPane(listaEmoticonos);
+		scrollPaneEmoticonos.setMaximumSize(new Dimension(800, 100));
+		
+		return scrollPaneEmoticonos;
+	}
+	
+	/**
 	 * Añade un manejador de eventos a <code>textField</code> para enviar mensajes
 	 * 
 	 * <p> Funcionalidad:
@@ -154,21 +236,8 @@ public class VentanaPrincipal extends JFrame {
 	private void addManejadorEnviarMensaje() {
 		textField.addActionListener(
 				ev -> {
-					Mensaje ultimoMensajeAnterior = lista.getSelectedValue();
-					Mensaje ultimoMensaje = Controlador.getUnicaInstancia().enviarMensaje(ultimoMensajeAnterior, textField.getText());
-					textField.setText("");
-					
-					mostrarMensaje(ultimoMensaje);
-					SwingUtilities.invokeLater(() -> {
-				        JScrollBar vertical = scrollPane.getVerticalScrollBar();
-				        vertical.setValue(vertical.getMaximum());
-				    });
-					
-					modelo.removeElement(ultimoMensajeAnterior);
-					modelo.add(0,ultimoMensaje);
-					lista.setSelectedIndex(0);
-	    			lista.revalidate();
-	    			lista.repaint();
+					enviarMensajeAlChatActual(textField.getText());
+	    			textField.setText("");
 				});
 	}
 	
@@ -417,7 +486,7 @@ public class VentanaPrincipal extends JFrame {
 		lista.addListSelectionListener(ev -> {
         	if(lista.getSelectedValue() != null) {
         		ultimoMensajeChatMostrado = null;
-        		textField.setVisible(true); // No se muestra el textField hasta que no se selecciona un chat
+        		panelEnviarMensaje.setVisible(true); // No se muestra hasta que no se selecciona un chat
         		
         		panelDelChat.removeAll();
         		
@@ -435,7 +504,7 @@ public class VentanaPrincipal extends JFrame {
 			    });
     		}
         	else {
-        		textField.setVisible(false);
+        		panelEnviarMensaje.setVisible(false);
         		usuarioConChatMostrado = null;
         		ultimoMensajeChatMostrado = null;
         	}
