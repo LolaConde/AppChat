@@ -1,4 +1,4 @@
-package modelo;
+package generarDocumentos;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.AreaBreakType;
 
-public class ITextGeneradorPDF extends GeneradorPDF {
+public class ITextGeneradorPDF extends GeneradorDocumento {
 	
 	private PdfDocument pdfDoc;
 	private Document doc;
@@ -26,7 +26,7 @@ public class ITextGeneradorPDF extends GeneradorPDF {
 	private Paragraph parrafoActual;
 
 	@Override
-	public boolean nuevoPDF(String url) {
+	public boolean nuevoDocumento(String url) {
 		// Nuevo documento
 		try {
 			writer = new PdfWriter(url);
@@ -95,7 +95,7 @@ public class ITextGeneradorPDF extends GeneradorPDF {
 	}
 
 	@Override 
-	public void finalizarPDF() {
+	public void finalizarDocumento() {
 		doc.close();
 		// Evitar modificarlo ya cerrado
 		doc = null;

@@ -15,15 +15,16 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import generarDocumentos.ExportacionChats;
+import generarDocumentos.GeneradorDocumento;
+import generarDocumentos.ITextGeneradorPDF;
 import modelo.Contacto;
 import modelo.ContactoIndividual;
 import modelo.Descuento;
 import modelo.DescuentoFecha;
 import modelo.DescuentoMensaje;
 import modelo.DescuentoNull;
-import modelo.GeneradorPDF;
 import modelo.GrupoDeContactos;
-import modelo.ITextGeneradorPDF;
 import modelo.Mensaje;
 import modelo.RepositorioUsuarios;
 import modelo.Usuario;
@@ -40,7 +41,7 @@ public class Controlador {
 	private static Controlador unicaInstancia;
 	
 	private Usuario usuarioActual;
-	private GeneradorPDF servicioPDF;
+	private ITextGeneradorPDF servicioPDF;
 	private RepositorioUsuarios repositorioUsuarios;
 	private IAdaptadorUsuarioDAO adaptadorUsuario;
 	private IAdaptadorMensajeDAO adaptadorMensaje;
@@ -54,6 +55,7 @@ public class Controlador {
 	private Controlador() {
 		inicializarAdaptadores();
 		inicializarRepositorios();
+		servicioPDF = new ITextGeneradorPDF();
 	}
 	
 	public static Controlador getUnicaInstancia() {
@@ -136,49 +138,10 @@ public class Controlador {
 	 * @param urlArchivo La url del pdf creado
 	 */
 	public void exportarPdf(Usuario usuario, String urlArchivo) {
-		GeneradorPDF generadorPDF = new ITextGeneradorPDF();
-		generadorPDF.nuevoPDF(urlArchivo);
-		// Primera página
-		generadorPDF.añadirTextoNegrita("Conversación con el usuario: ");
-		generadorPDF.añadirTextoNormal(usuario.getNombre() + " (");
-		generadorPDF.añadirTextoCursiva(Integer.toString(usuario.getNumeroTelefono()));
-		generadorPDF.añadirTextoNormal(")");
-		generadorPDF.finalizarParrafo();
-		generadorPDF.siguientePagina();
-		
-		// Conversación
-		usuarioActual.getConversacion(usuario).stream().forEach(m -> addMensaje(m, generadorPDF));
-		generadorPDF.finalizarParrafo();
-		generadorPDF.finalizarPDF();
+		ExportacionChats.getUnicaInstancia().exportarDocumento(usuarioActual, usuario, urlArchivo, servicioPDF);
 	}
 	
-	/** Añade los datos de <code>mensaje</code> al pdf que se está creando en <code>generadorPDF</code>
-	 * 
-	 * @param mensaje
-	 * @param generadorPDF
-	 */
-	private void addMensaje(Mensaje mensaje, GeneradorPDF generadorPDF) {
-		generadorPDF.añadirTextoNegrita("Emisor: ");
-		generadorPDF.añadirTextoCursiva(mensaje.getEmisor().getNombre());
-		generadorPDF.finalizarParrafo();
-		generadorPDF.añadirTextoNegrita("Fecha: ");
-		generadorPDF.añadirTextoCursiva(mensaje.getFechaYHora().toString());
-		generadorPDF.finalizarParrafo();
-		if(mensaje.isMensajeDeTexto()) {
-			generadorPDF.añadirTextoNegrita("Texto: ");
-			generadorPDF.añadirTextoCursiva(mensaje.getTexto().orElse(""));
-		}
-		else {
-			generadorPDF.añadirTextoNegrita("Emoticono: ");
-			ImageIcon imageIcon = BubbleText.getEmoji(mensaje.getEmoticono().get());
-			BufferedImage imagen = (BufferedImage) imageIcon.getImage();
-			generadorPDF.añadirImagen(imagen);
-		}
-		generadorPDF.finalizarParrafo();
-		generadorPDF.añadirTextoNormal("------------------");
-		generadorPDF.finalizarParrafo();
-		generadorPDF.finalizarParrafo();
-	}
+	
 	
 	/**
 	 * @return Lista con todos los contactos del usuario actual
