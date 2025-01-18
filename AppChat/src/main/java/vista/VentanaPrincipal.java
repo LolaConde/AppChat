@@ -224,12 +224,13 @@ public class VentanaPrincipal extends JFrame {
 		botonera.setBorder(new EmptyBorder(0, 0, 10, 0));
 		botonera.setLayout(new BoxLayout(botonera, BoxLayout.X_AXIS));
 		
-		// Lista de contactos
-		JComboBox comboBox = new JComboBox();
-		comboBox.setMaximumSize(new Dimension(500, 5120));
-		comboBox.setBackground(FuncionesVentanas.COLOR_ROSA);
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"contacto 1", "contacto 2", "contacto 3"}));
-		botonera.add(comboBox);
+		// Botón consultar emoticonos
+		JButton btnConsultarEmoticonos = new JButton("Consulta los emoticonos");
+		btnConsultarEmoticonos.addActionListener(ev -> {
+			new VentanaElegirEmoticono();
+		});
+		btnConsultarEmoticonos.setBackground(FuncionesVentanas.COLOR_ROSA);
+		botonera.add(btnConsultarEmoticonos);
 		
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		horizontalStrut.setPreferredSize(new Dimension(10, 0));
