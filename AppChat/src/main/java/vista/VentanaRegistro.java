@@ -113,6 +113,7 @@ public class VentanaRegistro extends JFrame {
 				// Obtiene la fecha de nacimiento si se ha introducido, o null si no es así.
 				Date fecha = fechaNacimientoDateChooser.getDate();
 				LocalDate fechaNacimiento = fecha != null? fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
+				// Registrar usuario
 				Controlador.getUnicaInstancia().registrarUsuario(nombreTxtField.getText() + " " + apellidosTxtField.getText(), new String(passwordField1.getPassword()), Integer.parseInt(telefonoTxtField.getText()), "", fechaNacimiento, imagenTxtField.getText(), saludoField.getText());
 				JOptionPane.showMessageDialog(contentPane, "Usuario registrado correctamente", "Registro correcto", JOptionPane.PLAIN_MESSAGE);
 				// Ir al login
