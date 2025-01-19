@@ -72,7 +72,9 @@ public class VentanaEnviarMensaje extends JFrame {
 		gbc_btnEscribirATlf.insets = new Insets(0, 0, 5, 5);
 		gbc_btnEscribirATlf.gridx = 2;
 		gbc_btnEscribirATlf.gridy = 2;
-		addManejadorEscribirATelefono(btnEscribirATlf);
+		btnEscribirATlf.addActionListener(ev -> {
+			FuncionesVentanas.irAVentana(this, new EnviarMensajeATelefono());
+		});
 		contentPane.add(btnEscribirATlf, gbc_btnEscribirATlf);
 		
 		// Botón cancelar
@@ -87,41 +89,6 @@ public class VentanaEnviarMensaje extends JFrame {
 		gbc_btnCancelar.gridx = 1;
 		gbc_btnCancelar.gridy = 4;
 		contentPane.add(btnCancelar, gbc_btnCancelar);
-	}
-	
-	private void addManejadorEscribirATelefono(JButton boton) {
-		boton.addActionListener(ev -> {
-			// Crea JOptionPane preguntando número y mensaje
-			JTextField fieldNumero = new JTextField();
-			JTextField fieldMensaje = new JTextField();
-			Object[] inputs = {
-					"Número: ", fieldNumero,
-					"Mensaje: ", fieldMensaje,
-			};
-			
-			int option = JOptionPane.showConfirmDialog(this, inputs, "Enviar mensaje", JOptionPane.OK_CANCEL_OPTION);
-			
-			if(option == JOptionPane.OK_OPTION) {
-				String mensaje = fieldMensaje.getText();
-				String stringNumero = fieldNumero.getText();
-				if(mensaje.length() == 0) {
-					JOptionPane.showMessageDialog(this, "No se ha podido enviar el mensaje, el mensaje no puede estar vacío", "Error con el mensaje", JOptionPane.ERROR_MESSAGE);
-				} else if(!stringNumero.matches("^[0-9]+$")) {
-					JOptionPane.showMessageDialog(this, "No se ha podido enviar el mensaje, el número debe contener números y ningún otro caracter", "Error con el número", JOptionPane.ERROR_MESSAGE);
-				} else {
-					int telefono = Integer.parseInt(stringNumero);
-					boolean existeNumero = Controlador.getUnicaInstancia().enviarMensaje(telefono, mensaje);
-					if(existeNumero) {
-						// Campos correctos. Mensaje se envía
-						JOptionPane.showMessageDialog(this, "Mensaje enviado", "Información", JOptionPane.INFORMATION_MESSAGE);
-						FuncionesVentanas.irAVentana(this, new VentanaPrincipal());
-					}
-					else {
-						JOptionPane.showMessageDialog(this, "El teléfono indicado no existe", "Alert", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		});
 	}
 
 }

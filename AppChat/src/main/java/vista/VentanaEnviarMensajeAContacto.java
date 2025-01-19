@@ -110,15 +110,8 @@ public class VentanaEnviarMensajeAContacto extends JFrame {
 		scrollPaneContacto.setViewportView(listContactos);
 		
 		// Introducir el mensaje
-		JPanel panelMensaje = new JPanel();
-		panelDatos.add(panelMensaje);
-		panelMensaje.setLayout(new BoxLayout(panelMensaje, BoxLayout.X_AXIS));
-		
-		JLabel lblMensaje = new JLabel("Mensaje:");
-		panelMensaje.add(lblMensaje);
-		
 		fieldMensaje = new JTextField();
-		panelMensaje.add(fieldMensaje);
+		panelDatos.add(FuncionesVentanas.panelTexto("Mensaje :", fieldMensaje, this));
 		fieldMensaje.setColumns(10);
 		
 		return panelDatos;
@@ -136,5 +129,7 @@ public class VentanaEnviarMensajeAContacto extends JFrame {
         listContactos.setCellRenderer(new ContactoCellRenderer());
         listContactos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
+	
+	
 
 }

@@ -15,6 +15,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JButton;
@@ -31,6 +32,7 @@ public class VentanaBuscarMensajes extends JFrame {
 	private DefaultListModel<Mensaje> modelo;
 	private JScrollPane panelConLista;
 	private JList<Mensaje> listaMensajes;
+	private static final ImageIcon ICONO_EMOTICONOS = new ImageIcon(VentanaBuscarMensajes.class.getResource("/vista/imagenes/emoticonos.png"));
 	
 	/**
 	 * Create the frame.
@@ -39,7 +41,7 @@ public class VentanaBuscarMensajes extends JFrame {
 		setTitle("AppChat");
 		FuncionesVentanas.addIcon(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -99,16 +101,8 @@ public class VentanaBuscarMensajes extends JFrame {
 		panelBusqueda.add(verticalStrut_1);
 		
 		// Filtro texto
-		JPanel panelTexto = new JPanel();
-		panelBusqueda.add(panelTexto);
-		panelTexto.setLayout(new BoxLayout(panelTexto, BoxLayout.X_AXIS));
-		
-		JLabel lblTexto = new JLabel("Texto: ");
-		panelTexto.add(lblTexto);
-		
-		fieldTexto = new JTextField();
-		panelTexto.add(fieldTexto);
-		fieldTexto.setToolTipText("");
+		this.fieldTexto = new JTextField();
+		panelBusqueda.add(FuncionesVentanas.panelTexto("Texto: ", fieldTexto, this));
 		
 		// 
 		Component verticalStrut = Box.createVerticalStrut(20);

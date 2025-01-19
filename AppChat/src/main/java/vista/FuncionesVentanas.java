@@ -7,6 +7,7 @@ import javax.swing.*;
 
 import controlador.Controlador;
 import modelo.Usuario;
+import tds.BubbleText;
 
 public class FuncionesVentanas {
 	
@@ -19,6 +20,9 @@ public class FuncionesVentanas {
 	public static final ImageIcon ICONO_USUARIO_SIN_FOTO = new ImageIcon(FuncionesVentanas.class.getResource("/vista/imagenes/usuario-sin-foto.png"));
 	
 	public static final Color COLOR_ROSA = new Color(247, 210, 249);
+	
+
+	private static final ImageIcon ICONO_EMOTICONOS = new ImageIcon(FuncionesVentanas.class.getResource("/vista/imagenes/emoticonos.png"));
 	
 	/**
 	 * Añade un KeyListener a <code>telefonoField</code> para permitir únicamente números. Cualquier otro carácter será ignorado.
@@ -107,5 +111,81 @@ public class FuncionesVentanas {
 	public static String getNombreDeContactoOTelefono(Usuario usuario) {
 		return Controlador.getUnicaInstancia().getNombreDeContacto(usuario)
         .orElse(Integer.toString(usuario.getNumeroTelefono()));
+	}
+	
+	/**
+	 * @return panel con el string <code>texto</code>, seguido de <code>textField</code>, y un
+	 * botón de emoticonos. Si se pulsa el botón se ven los emoticonos, de tal forma
+	 * que si se pulsa un emoticono, su código se muestra en textField.
+	 * @param texto
+	 * @param textField
+	 * @param frame El JFrame en el que se muestra el panel resultante
+	 */
+	public static JPanel panelTexto(String texto, JTextField textField, JFrame frame) {
+		JPanel panelMensaje = new JPanel();
+		panelMensaje.setLayout(new BoxLayout(panelMensaje, BoxLayout.Y_AXIS));
+		
+		JPanel panelEscribirMensaje = new JPanel();
+		panelEscribirMensaje.setLayout(new BoxLayout(panelEscribirMensaje, BoxLayout.X_AXIS));
+		panelMensaje.add(panelEscribirMensaje);
+		
+		// Texto:
+		JLabel lblTexto = new JLabel(texto);
+		panelEscribirMensaje.add(lblTexto);
+		
+		// Escribir
+		panelEscribirMensaje.add(textField);
+		textField.setToolTipText("");
+		
+		// Mostrar emoticonos
+		JButton btnMostrarEmoticonos = new JButton("");
+		btnMostrarEmoticonos.setIcon(ICONO_EMOTICONOS);
+		btnMostrarEmoticonos.setBackground(FuncionesVentanas.COLOR_ROSA);
+		panelEscribirMensaje.add(btnMostrarEmoticonos);
+		
+		// Los emoticonos
+		JScrollPane scrollPaneEmoticonos = scrollPaneEmoticonos(textField);
+		panelMensaje.add(scrollPaneEmoticonos);
+		
+		btnMostrarEmoticonos.addActionListener(ev -> {
+			scrollPaneEmoticonos.setVisible(!scrollPaneEmoticonos.isVisible());
+			frame.revalidate();
+			frame.repaint();
+		});
+		
+		return panelMensaje;
+	}
+	
+	/**
+	 * @return Un scrollPane que muestra una serie de emoticonos, de tal forma que si se selecciona
+	 * uno, se escribe en el <code>fieldTexto</code> el codigo que se corresponde con dicho emoticono
+	 * @param fieldTexto
+	 */
+	private static JScrollPane scrollPaneEmoticonos(JTextField fieldTexto) {
+		// Lista de emoticonos
+		DefaultListModel<Integer> modeloEmoticonos = new DefaultListModel<Integer>();
+		for(int i=0; i<BubbleText.MAXICONO; i++) {
+			modeloEmoticonos.addElement(i);
+		}
+		JList<Integer> listaEmoticonos = new JList<Integer>(modeloEmoticonos);
+		listaEmoticonos.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		listaEmoticonos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listaEmoticonos.setBackground(new Color(238, 238, 238));
+		listaEmoticonos.setCellRenderer(new EmoticonoCellRenderer2());
+		listaEmoticonos.setVisibleRowCount(-1);
+		
+		listaEmoticonos.addListSelectionListener(
+				ev -> {
+					if(!ev.getValueIsAdjusting() && listaEmoticonos.getSelectedValue() != null) {
+						fieldTexto.setText(":"+listaEmoticonos.getSelectedValue());
+					}
+				}
+		);
+		
+		// Scroll para la lista de emoticonos
+		JScrollPane scrollPaneEmoticonos = new JScrollPane(listaEmoticonos);
+		scrollPaneEmoticonos.setMaximumSize(new Dimension(800, 100));
+		
+		return scrollPaneEmoticonos;
 	}
 }

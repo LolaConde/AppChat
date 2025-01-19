@@ -20,12 +20,10 @@ import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 
 import java.awt.Component;
 import javax.swing.Box;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.imageio.ImageIO;
@@ -130,7 +128,6 @@ public class VentanaPrincipal extends JFrame {
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		
 		panelDelChat = new JPanel();
 		panelDelChat.setLayout(new BoxLayout(panelDelChat, BoxLayout.Y_AXIS));
 		panelDelChat.setSize(400,700);
