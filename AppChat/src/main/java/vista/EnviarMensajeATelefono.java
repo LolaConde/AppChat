@@ -3,6 +3,7 @@ package vista;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.Box;
@@ -33,7 +34,7 @@ public class EnviarMensajeATelefono extends JFrame {
 		FuncionesVentanas.addIcon(this);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 250);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -97,6 +98,7 @@ public class EnviarMensajeATelefono extends JFrame {
 		JPanel panelDatos = new JPanel();
 		panelDatos.setLayout(new BoxLayout(panelDatos, BoxLayout.Y_AXIS));
 		
+		panelDatos.add(Box.createGlue());
 		// Introducir el numero
 		JPanel panelNumero = new JPanel();
 		panelDatos.add(panelNumero);
@@ -106,13 +108,15 @@ public class EnviarMensajeATelefono extends JFrame {
 		panelNumero.add(lblNumero);
 		
 		fieldTelefono = new JTextField();
+		fieldTelefono.setMaximumSize(new Dimension(2147483647, 20));
 		panelNumero.add(fieldTelefono);
 		
 		// Introducir el mensaje
 		fieldMensaje = new JTextField();
 		panelDatos.add(FuncionesVentanas.panelTexto("Mensaje :", fieldMensaje, this));
-		fieldMensaje.setColumns(10);
+		fieldMensaje.setMaximumSize(new Dimension(2147483647, 20));
 		
+		panelDatos.add(Box.createGlue());
 		return panelDatos;
 	}
 
